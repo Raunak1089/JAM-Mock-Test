@@ -2205,6 +2205,9 @@
           s < 10 ? "0" + s : s
         }`;
         if (time > 0) time--;
+        else {
+          submitExam();
+        }
       }, 1000);
 
       function populateFullPaperView() {
