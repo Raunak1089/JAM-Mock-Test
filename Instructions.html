@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instructions - Assessment Examination Center</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #ffffff;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* --- Top Banner (Matching Login Page) --- */
+        #top-banner {
+            height: 50px;
+            background-color: #e6f7ff; /* Light blue tint from screenshot */
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            border-bottom: 2px solid #337ab7;
+            position: relative;
+        }
+
+        #top-banner img.logo-left {
+            height: 40px;
+            margin-right: 15px;
+        }
+
+        #top-banner h1 {
+            color: #c00000;
+            font-size: 20px;
+            font-weight: bold;
+            margin: 0;
+            flex: 1; /* Pushes right logo to end */
+        }
+
+        #top-banner img.logo-right {
+            height: 40px;
+        }
+
+        /* --- Main Content Split --- */
+        #main-container {
+            display: flex;
+            flex: 1;
+            height: calc(100vh - 80px); /* Adjust for header/footer */
+        }
+
+        /* --- Left Side: Instructions --- */
+        #instructions-panel {
+            width: 80%;
+            padding: 10px;
+            overflow-y: auto; /* Scrollable */
+            border-right: 1px solid #ccc;
+            position: relative;
+        }
+
+        .inst-header {
+            background-color: #d9edf7;
+            padding: 10px;
+            font-weight: bold;
+            font-size: 16px;
+            color: #31708f;
+            border: 1px solid #bce8f1;
+            margin-bottom: 10px;
+        }
+
+        .inst-content {
+            padding: 0 15px;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .inst-title {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #000;
+        }
+
+        .red-text {
+            color: red;
+            font-weight: bold;
+        }
+
+        /* Question Palette Legend Table */
+        .legend-table {
+            width: 100%;
+            max-width: 600px;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+
+        .legend-table td {
+            border: 1px solid #ccc;
+            padding: 5px;
+            vertical-align: middle;
+        }
+
+        .legend-icon {
+            display: inline-block;
+            width: 25px;
+            height: 25px;
+            line-height: 25px;
+            text-align: center;
+            color: #fff;
+            font-weight: bold;
+            border-radius: 2px; /* Slight round, or square depending on exact version */
+            font-size: 12px;
+        }
+
+        .icon-grey { background-color: #e0e0e0; color: #000; border: 1px solid #ccc; } /* Not Visited */
+        .icon-red { background-color: #d9534f; border-radius: 0 0 10px 10px; } /* Not Answered shape hint */
+        .icon-green { background-color: #5cb85c; border-radius: 10px 10px 0 0; } /* Answered shape hint */
+        .icon-purple { background-color: #a020f0; border-radius: 15px; } /* Review */
+        .icon-purple-tick { background-color: #a020f0; position: relative; border-radius: 15px; }
+        .icon-purple-tick::after { content: '✔'; position: absolute; top: -5px; right: -5px; color: green; font-size: 14px; }
+
+        /* Navigation Arrows Legend */
+        .nav-arrow {
+            display: inline-block;
+            background-color: #337ab7;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 2px;
+            font-size: 10px;
+        }
+
+        /* Math Notation Table (Page 2) */
+        .math-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+        
+        .math-table td, .math-table th {
+            border: 1px solid #000;
+            padding: 4px;
+        }
+
+        /* --- Right Side: Profile --- */
+        #profile-panel {
+            width: 20%;
+            background-color: #fcfcfc;
+            padding: 20px;
+            text-align: center;
+            border-left: 3px solid #e0e0e0;
+        }
+
+        .profile-pic {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 10px auto;
+            border: 1px solid #999;
+            background: #e6e6e6; /* Placeholder gray */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .profile-pic i {
+            font-size: 80px;
+            color: #666;
+        }
+
+        .profile-name {
+            font-weight: bold;
+            font-size: 14px;
+            color: #333;
+        }
+
+        /* --- Bottom Footer Bar --- */
+        #bottom-bar {
+            height: 50px;
+            background-color: #f8f8f8;
+            border-top: 1px solid #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: space-between; /* Space out buttons */
+            padding: 0 20px;
+        }
+
+        .disclaimer-container {
+            font-size: 12px;
+            display: flex;
+            align-items: flex-start;
+            padding: 5px;
+            background: #fff;
+            border: 1px solid #ddd;
+            margin-right: 10px;
+            width: 75%; /* Occupy most space */
+        }
+
+        .disclaimer-container input {
+            margin-right: 10px;
+            margin-top: 2px;
+        }
+
+        /* Buttons */
+        .btn-nav {
+            padding: 8px 15px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            cursor: pointer;
+            font-weight: bold;
+            border-radius: 3px;
+        }
+
+        .btn-nav:hover { background-color: #e6e6e6; }
+
+        .btn-primary {
+            padding: 8px 20px;
+            background-color: #5bc0de; /* Light blue "Ready" button */
+            border: 1px solid #46b8da;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+
+        .btn-primary:disabled {
+            background-color: #a5d8e6;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background-color: #31b0d5;
+        }
+
+        /* Footer Version */
+        #footer-version {
+            height: 20px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            font-size: 10px;
+            line-height: 20px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="top-banner">
+        <div style="font-weight:bold; color:#d9534f; margin-right:10px;"><i class="fa-solid fa-graduation-cap"></i> JAM 2022</div>
+        <h1>JOINT ADMISSION TEST FOR MASTERS (JAM) 2022</h1>
+        <div style="font-weight:bold; color:#000;">IIT DELHI <i class="fa-solid fa-university"></i></div>
+    </div>
+
+    <div id="main-container">
+        
+        <div id="instructions-panel">
+            
+            <div id="page1">
+                <div class="inst-header">Instructions</div>
+                <div class="inst-content">
+                    <div class="inst-title">JAM 2022: General Instructions during Examination</div>
+                    <p class="red-text">This is a mock test for JAM examination pattern familiarity. Candidates are advised to practice with the given calculator as its functioning might be different from the physical calculators used.</p>
+                    
+                    <ol>
+                        <li>Total duration of examination is <strong>180 minutes</strong>.</li>
+                        <li>Calculator is available on top, right hand side of the screen.</li>
+                        <li>The clock will be set at the server. The countdown timer at the top right corner...</li>
+                        <li>The Question Palette displayed on the right side of screen will show the status of each question using one of the following symbols:
+                            <table class="legend-table">
+                                <tr>
+                                    <td width="30"><div class="legend-icon icon-grey">1</div></td>
+                                    <td>You have NOT visited the question yet.</td>
+                                </tr>
+                                <tr>
+                                    <td><div class="legend-icon icon-red">2</div></td>
+                                    <td>You have NOT answered the question.</td>
+                                </tr>
+                                <tr>
+                                    <td><div class="legend-icon icon-green">3</div></td>
+                                    <td>You have answered the question.</td>
+                                </tr>
+                                <tr>
+                                    <td><div class="legend-icon icon-purple">4</div></td>
+                                    <td>You have NOT answered the question, but have marked the question for review.</td>
+                                </tr>
+                                <tr>
+                                    <td><div class="legend-icon icon-purple-tick">5</div></td>
+                                    <td>You have answered the question and marked for review. This will be evaluated.</td>
+                                </tr>
+                            </table>
+                        </li>
+                        <li>You can click on the <span class="nav-arrow">&gt;</span> arrow which appears to the left of question palette to collapse...</li>
+                        <li>You can click on <span class="nav-arrow">↓</span> to navigate to the bottom and <span class="nav-arrow">↑</span> to navigate to the top...</li>
+                    </ol>
+                    
+                    <strong>Navigating to a Question:</strong>
+                    <ol start="7">
+                        <li>To answer a question, do the following:
+                            <ul style="list-style-type: lower-alpha;">
+                                <li>Click on the question number in the Question Palette to go to that question directly.</li>
+                                <li>Select the answer for a multiple choice type question...</li>
+                                <li>Click on <strong>Save & Next</strong> to save your answer...</li>
+                            </ul>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+
+            <div id="page2" style="display:none;">
+                <div class="inst-header">Other Important Instructions</div>
+                <div class="inst-content">
+                    <ol start="6">
+                        <li>A virtual Scientific Calculator is provided on your computer screen...</li>
+                        <li>You can use the scribble pad provided to you at the examination center for all your rough work...</li>
+                        <li>Some useful data/notation required for your paper can be viewed by clicking on the Useful Data link...</li>
+                    </ol>
+
+                    <table class="math-table">
+                        <tr><th>Symbol</th><th>Meaning</th></tr>
+                        <tr><td>N</td><td>The set of positive integers</td></tr>
+                        <tr><td>R</td><td>The set of real numbers</td></tr>
+                        <tr><td>ln x</td><td>Natural logarithm of x, x > 0</td></tr>
+                        <tr><td>det(M)</td><td>Determinant of a square matrix M</td></tr>
+                        <tr><td>P(E)</td><td>Probability of event E</td></tr>
+                    </table>
+                    <br>
+                    
+                    <div class="disclaimer-container">
+                        <input type="checkbox" id="chk-disclaimer" onchange="toggleReadyBtn()">
+                        <label for="chk-disclaimer">
+                            I have read and understood the instructions. All computer hardware allotted to me are in proper working condition. I declare that I am not in possession of / not wearing / not carrying any prohibited gadget like mobile phone, bluetooth devices etc. /any prohibited material with me into the Examination Hall. I agree that in case of not adhering to the instructions, I shall be liable to be debarred from this Test and/or to disciplinary action, which may include ban from future Tests / Examinations.
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="profile-panel">
+            <div class="profile-pic">
+                <i class="fa-solid fa-user-tie"></i>
+            </div>
+            <div class="profile-name">John Smith</div>
+        </div>
+
+    </div>
+
+    <div id="bottom-bar">
+        <button id="btn-prev" class="btn-nav" onclick="goPrev()" style="visibility:hidden;">&lt; Previous</button>
+        
+        <button id="btn-ready" class="btn-primary" onclick="startExam()" disabled style="display:none;">I am ready to begin</button>
+
+        <button id="btn-next" class="btn-nav" onclick="goNext()">Next &gt;</button>
+    </div>
+
+    <div id="footer-version">Version 17.07.00</div>
+
+    <script>
+        function goNext() {
+            document.getElementById('page1').style.display = 'none';
+            document.getElementById('page2').style.display = 'block';
+            
+            // Button Logic
+            document.getElementById('btn-next').style.display = 'none';
+            document.getElementById('btn-prev').style.visibility = 'visible';
+            document.getElementById('btn-ready').style.display = 'block'; // Show Ready button
+        }
+
+        function goPrev() {
+            document.getElementById('page2').style.display = 'none';
+            document.getElementById('page1').style.display = 'block';
+
+            // Button Logic
+            document.getElementById('btn-next').style.display = 'block';
+            document.getElementById('btn-prev').style.visibility = 'hidden';
+            document.getElementById('btn-ready').style.display = 'none'; // Hide Ready button
+        }
+
+        function toggleReadyBtn() {
+            const chk = document.getElementById('chk-disclaimer');
+            const btn = document.getElementById('btn-ready');
+            btn.disabled = !chk.checked;
+        }
+
+        function startExam() {
+            // This function would usually redirect to Assessment.html
+            window.location.replace("Assessment.html");
+        }
+    </script>
+
+</body>
+</html>

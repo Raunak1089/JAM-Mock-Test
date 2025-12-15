@@ -1,0 +1,2529 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Assessment Examination Center</title>
+    <script src="https://raunak1089.github.io/all_scripts/fontawesome.js"></script>
+    <script
+      id="MathJax-script"
+      async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+    ></script>
+
+    <style>
+      /* --- GLOBAL RESET --- */
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        background-color: #fff;
+        user-select: none;
+      }
+      * {
+        box-sizing: border-box;
+      }
+
+      /* --- 1. TOP BANNER --- */
+      #top-banner {
+        height: 50px;
+        background-color: #e6f7ff;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 15px;
+        border-bottom: 2px solid #337ab7;
+      }
+      .logos {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      #top-banner h1 {
+        color: #c00000;
+        font-size: 18px;
+        font-weight: bold;
+        margin: 0;
+        text-transform: uppercase;
+      }
+      .inst-link-group {
+        display: flex;
+        gap: 10px;
+      }
+      .inst-btn {
+        background: #333;
+        color: white;
+        padding: 6px 12px;
+        border-radius: 3px;
+        text-decoration: none;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        cursor: pointer;
+        font-weight: bold;
+      }
+
+      /* --- 2. EXAM INFO BAR --- */
+      #exam-bar {
+        height: 40px;
+        background-color: #38aae9;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 10px;
+      }
+      .paper-name {
+        font-weight: bold;
+        font-size: 14px;
+      }
+      .right-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+      .timer-block {
+        font-weight: bold;
+        font-size: 14px;
+        background: #000;
+        padding: 5px 10px;
+        border-radius: 2px;
+      }
+
+      /* --- 3. MAIN LAYOUT --- */
+      #main-container {
+        display: flex;
+        flex: 1;
+        height: calc(100vh - 90px);
+      }
+
+      /* --- LEFT PANEL (Question Area) --- */
+      #left-panel {
+        width: 90%;
+        display: flex;
+        flex-direction: column;
+        border-right: 1px solid #ccc;
+        position: relative;
+      }
+
+      /* Tabs */
+      .tabs {
+        display: flex;
+        background: #fff;
+        border-bottom: 1px solid #ccc;
+        height: 40px;
+        align-items: center;
+        padding-left: 5px;
+      }
+      .tab {
+        padding: 8px 15px;
+        background: #fff;
+        border: 1px solid #ccc;
+        border-bottom: none;
+        margin-right: 2px;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: bold;
+        color: #337ab7;
+        border-radius: 4px 4px 0 0;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        position: relative;
+      }
+      .tab:hover {
+        background-color: #f0f0f0;
+      }
+      .tab.active {
+        background: #337ab7;
+        color: white;
+        border-color: #337ab7;
+      }
+
+      /* Info Icon & Custom Tooltip */
+      .info-icon {
+        background: #17a2b8;
+        color: white;
+        border-radius: 50%;
+        width: 16px;
+        height: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        font-weight: bold;
+        font-style: italic;
+        cursor: help;
+      }
+
+      /* Tooltip Container */
+      .tooltip-box {
+        display: none;
+        position: absolute;
+        top: 39px;
+        left: 0;
+        width: 200px;
+        background: #fff;
+        border: 1px solid #ccc;
+        padding: 0;
+        z-index: 9999;
+        box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
+        color: #333;
+        font-weight: normal;
+        text-align: left;
+      }
+      .tab:hover .tooltip-box {
+        display: block;
+      }
+
+      /* Tooltip Content Rows */
+      .tt-row {
+        display: flex;
+        align-items: center;
+        padding: 6px 10px;
+        border-bottom: 1px solid #eee;
+        font-size: 12px;
+      }
+      .tt-row:last-child {
+        border-bottom: none;
+      }
+
+      /* Shapes inside Tooltip (reusing legend styles) */
+      .tt-shape {
+        width: 22px;
+        height: 22px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        color: white;
+        font-weight: bold;
+        margin-right: 10px;
+      }
+
+      /* Question Header */
+      .q-header {
+        padding: 8px 15px;
+        display: flex;
+        justify-content: space-between;
+        font-size: 1.1em;
+        font-weight: bold;
+        background: #fff;
+        margin-bottom: 10px;
+        color: #000;
+      }
+      .marks-info {
+        color: #555;
+        font-size: 12px;
+      }
+      .marks-pos {
+        color: green;
+      }
+      .marks-neg {
+        color: #c00000;
+      }
+
+      /* Question Body */
+      .q-body {
+        flex: 1;
+        padding: 20px;
+        overflow-y: auto;
+        font-size: 16px;
+        line-height: 1.6;
+      }
+      .q-no {
+        font-weight: bold;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 10px;
+        margin-bottom: 15px;
+      }
+
+      /* Option Inputs */
+      .option-row {
+        margin: 12px 0;
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        cursor: pointer;
+      }
+      .option-row input {
+        margin-top: 5px;
+        transform: scale(1.2);
+      }
+      .math-tex {
+        font-family: "Times New Roman", serif;
+        font-style: italic;
+        font-weight: bold;
+      }
+
+      /* NAT Keypad Style (Section C) */
+      .nat-wrapper {
+        margin-top: 20px;
+      }
+      .nat-input {
+        padding: 10px;
+        font-size: 18px;
+        width: 250px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        display: block;
+      }
+      .keypad {
+        display: grid;
+        grid-template-columns: repeat(3, 60px);
+        gap: 5px;
+      }
+      .key {
+        height: 40px;
+        background: #fff;
+        border: 1px solid #ccc;
+        font-weight: bold;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        border-radius: 4px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      }
+      .key:hover {
+        background: #e2e6ea;
+      }
+      .key.action {
+        font-size: 12px;
+        background: #f0f0f0;
+      }
+
+      /* Footer */
+      .q-footer {
+        height: 50px;
+        background: #f9f9f9;
+        border-top: 1px solid #ccc;
+        display: flex;
+        align-items: center;
+        padding: 0 15px;
+        justify-content: space-between;
+      }
+      .btn {
+        padding: 8px 15px;
+        border: 1px solid #ccc;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 12px;
+        border-radius: 2px;
+        background: #fff;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      }
+      .btn:hover {
+        background: #e6e6e6;
+      }
+      .btn-save {
+        background: #337ab7;
+        color: white;
+        border-color: #2e6da4;
+      }
+      .btn-save:hover {
+        background: #286090;
+      }
+
+      /* --- RIGHT PANEL (Sidebar) --- */
+      #right-panel {
+        width: 18em;
+        background: #eef7fa;
+        border-left: 5px solid #e0e0e0;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .user-profile {
+        padding: 10px;
+        background: #fff;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        border-bottom: 1px solid #ccc;
+      }
+      .user-pic {
+        width: 50px;
+        height: 50px;
+        background: #ddd;
+        border: 1px solid #999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 30px;
+        color: #fff;
+      }
+
+      /* Legend Summary on Right */
+      .legend-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 5px;
+        padding: 10px;
+        font-size: 11px;
+        background: #fff;
+        border-bottom: 1px solid #ccc;
+      }
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .legend-item .count {
+        font-weight: bold;
+      }
+
+      /* --- PALETTE SHAPES (Used in Legend & Grid & Tooltip) --- */
+      /* Common base */
+      .lg-base {
+        width: 22px;
+        height: 22px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        color: white;
+        font-weight: bold;
+      }
+
+      /* Specific Styles */
+      .lg-green {
+        background: #5cb85c;
+        border-radius: 12px 12px 0 0;
+      } /* Round Top */
+      .lg-red {
+        background: #d9534f;
+        border-radius: 0 0 12px 12px;
+      } /* Round Bottom */
+      .lg-grey {
+        background: #f0f0f0;
+        color: black;
+        border: 1px solid #ccc;
+        border-radius: 0;
+      } /* Square */
+      .lg-purple {
+        background: #7b1fa2;
+        border-radius: 50%;
+      } /* Circle */
+      .lg-purple-tick {
+        background: #7b1fa2;
+        border-radius: 50%;
+        position: relative;
+      }
+      /* THE GREEN TICK FIX */
+      .lg-purple-tick::after {
+        content: "\f00c";
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900;
+        position: absolute;
+        bottom: 0px;
+        right: -3px;
+        color: #5cb85c; /* Green Icon */
+        background: white;
+        border-radius: 50%;
+        font-size: 9px;
+        padding: 1px;
+        border: 1px solid #fff;
+      }
+
+      .palette-header {
+        background: #337ab7;
+        color: white;
+        padding: 10px;
+        font-weight: bold;
+        font-size: 14px;
+      }
+      .palette-sub {
+        background: #d9edf7;
+        padding: 5px 10px;
+        font-size: 12px;
+        font-weight: bold;
+        border-bottom: 1px solid #ccc;
+      }
+
+      /* Question Palette Grid */
+      .question-grid {
+        padding: 10px;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        overflow-y: auto;
+        flex: 1;
+        align-content: flex-start;
+      }
+
+      /* Grid Buttons behave like the legends */
+      .q-btn {
+        height: 2.7em;
+        width: 2.7em;
+        border: 1px solid #ccc;
+        background: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 1em;
+        position: relative;
+        color: black;
+      }
+
+      /* Mapping Palette Classes */
+      .q-btn.not-answered {
+        background-color: #d9534f;
+        color: white;
+        border-radius: 0 0 20px 20px;
+      }
+      .q-btn.answered {
+        background-color: #5cb85c;
+        color: white;
+        border-radius: 20px 20px 0 0;
+      }
+      .q-btn.not-visited {
+        background-color: #f0f0f0;
+        color: black;
+        border-radius: 0;
+      }
+      .q-btn.marked {
+        background-color: #7b1fa2;
+        color: white;
+        border-radius: 50%;
+      }
+
+      .q-btn.marked-ans {
+        background-color: #7b1fa2;
+        color: white;
+        border-radius: 50%;
+      }
+      .q-btn.marked-ans::after {
+        content: "\f00c";
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900;
+        position: absolute;
+        bottom: 0px;
+        right: 0px;
+        color: #5cb85c;
+        background: white;
+        border-radius: 50%;
+        font-size: 10px;
+        padding: 1px;
+      }
+
+      .q-btn:hover {
+        opacity: 0.8;
+      }
+      .q-btn.current {
+        border: 2px solid #000;
+        box-shadow: 0 0 3px #000;
+        z-index: 10;
+      }
+
+      .submit-container {
+        padding: 10px;
+        background: #eef7fa;
+        border-top: 1px solid #ccc;
+      }
+      .submit-btn {
+        background: #337ab7;
+        color: white;
+        border: none;
+        padding: 12px;
+        width: 100%;
+        font-weight: bold;
+        cursor: pointer;
+        border-radius: 3px;
+      }
+      .submit-btn:hover {
+        background: #286090;
+      }
+
+      /* Modals */
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 2000;
+        justify-content: center;
+        align-items: center;
+      }
+      .modal-content {
+        width: 80%;
+        height: 80%;
+        background: white;
+        display: flex;
+        flex-direction: column;
+        border: 1px solid #337ab7;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+      }
+      .modal-header {
+        background: #337ab7;
+        color: white;
+        padding: 10px;
+        display: flex;
+        justify-content: space-between;
+        font-weight: bold;
+      }
+      .modal-body {
+        padding: 20px;
+        overflow-y: auto;
+        flex: 1;
+      }
+
+      /* Updated Styles for Clean List View */
+      .question-container {
+        margin-bottom: 20px;
+        border-top: 1px solid #ccc; /* Separator above the question */
+        padding-top: 20px;
+        padding-bottom: 10px;
+      }
+      /* Remove border for the very first question so there's no line at the top of the page */
+      .question-container:first-child {
+        border-top: none;
+        padding-top: 0;
+      }
+
+      .q-content {
+        margin-bottom: 15px;
+        line-height: 1.6;
+        font-size: 1em;
+      }
+      .q-options {
+        margin-left: 20px;
+        margin-bottom: 20px;
+      }
+      .q-option {
+        margin-bottom: 8px;
+      }
+
+      /* Plain text meta style as requested */
+      .q-meta {
+        font-size: 0.95em;
+        color: #333;
+        font-weight: 500;
+        margin-top: 15px;
+        margin-left: 50px;
+        font-style: italic;
+        padding-top: 10px;
+        border-top: 1px dashed #eee;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="top-banner">
+      <div class="logos">
+        <i
+          class="fa-solid fa-graduation-cap"
+          style="color: #d9534f; font-size: 28px"
+        ></i>
+        <h1>JOINT ADMISSION TEST FOR MASTERS (JAM) 2022</h1>
+      </div>
+      <div class="inst-link-group">
+        <div class="inst-btn" onclick="openModal('inst')">
+          <i class="fa-solid fa-circle-info"></i> Instructions
+        </div>
+        <div class="inst-btn" onclick="openModal('qp')">
+          <i class="fa-solid fa-file-lines"></i> Question Paper
+        </div>
+      </div>
+    </div>
+
+    <div id="exam-bar">
+      <div class="paper-name">Mathematical Statistics Mock Exam</div>
+      <div class="right-info">
+        <div class="timer-block">
+          Time Left : <span id="timer">180:00</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="main-container">
+      <div id="left-panel">
+        <div class="tabs">
+          <div class="tab active" id="tab-A" onclick="switchSection('A')">
+            Section A
+            <div class="info-icon">i</div>
+            <div class="tooltip-box" id="tooltip-A"></div>
+          </div>
+          <div class="tab" id="tab-B" onclick="switchSection('B')">
+            Section B
+            <div class="info-icon">i</div>
+            <div class="tooltip-box" id="tooltip-B"></div>
+          </div>
+          <div class="tab" id="tab-C" onclick="switchSection('C')">
+            Section C
+            <div class="info-icon">i</div>
+            <div class="tooltip-box" id="tooltip-C"></div>
+          </div>
+          <div
+            onclick="loadCalculator()"
+            style="
+              margin-left: auto;
+              cursor: pointer;
+              font-size: 1.5em;
+              color: orange;
+            "
+          >
+            <span class="calc-icon"><i class="fas fa-calculator"></i></span>
+          </div>
+        </div>
+
+        <div class="q-header" style="border-bottom: 1px solid #ccc">
+          <div>Question Type: <span id="q-type-label">MCQ</span></div>
+          <div class="marks-info">
+            Marks for correct answer: <span class="marks-pos">1</span> |
+            Negative Marks: <span class="marks-neg" id="neg-marks">1/3</span>
+          </div>
+        </div>
+
+        <div class="q-body" id="q-content"></div>
+
+        <div class="q-footer">
+          <div style="display: flex; gap: 5px">
+            <button class="btn" onclick="handleAction('review')">
+              Mark for Review & Next
+            </button>
+            <button class="btn" onclick="handleAction('clear')">
+              Clear Response
+            </button>
+          </div>
+          <button class="btn btn-save" onclick="handleAction('save')">
+            Save & Next
+          </button>
+        </div>
+      </div>
+
+      <div id="right-panel">
+        <div class="user-profile">
+          <div class="user-pic"><i class="fa-solid fa-user"></i></div>
+          <div style="font-weight: bold">John Smith</div>
+        </div>
+
+        <div class="legend-grid">
+          <div class="legend-item">
+            <div class="lg-base lg-green" id="leg-ans">0</div>
+            <span style="font-weight: bold">Answered</span>
+          </div>
+          <div class="legend-item">
+            <div class="lg-base lg-red" id="leg-not">0</div>
+            <span style="font-weight: bold">Not Answered</span>
+          </div>
+          <div class="legend-item">
+            <div class="lg-base lg-grey" id="leg-vis">0</div>
+            Not Visited
+          </div>
+          <div class="legend-item">
+            <div class="lg-base lg-purple" id="leg-mark">0</div>
+            Marked for Review
+          </div>
+          <div class="legend-item" style="grid-column: span 2">
+            <div class="lg-base lg-purple-tick" id="leg-markans">0</div>
+            Ans & Marked for Review
+          </div>
+        </div>
+
+        <div class="palette-header" id="section-title">Section A</div>
+        <div class="palette-sub">Choose a Question</div>
+
+        <div class="question-grid" id="palette-grid"></div>
+
+        <div class="submit-container">
+          <button class="submit-btn" onclick="submitExam()">Submit</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="wrapper">
+      <div id="minwidth">
+        <div id="candidateConsoleId" class="Container">
+          <div id="questionContent">
+            <div id="loadCalc" class="ui-draggable unselectable">
+              <!--	<title>SCIENTIFIC CALCULATOR</title>-->
+              <link
+                type="text/css"
+                rel="stylesheet"
+                href="https://www.digialm.com//OnlineAssessment/css/calclayout.css"
+              />
+              <script
+                type="text/javascript"
+                src="https://www.digialm.com//OnlineAssessment/js/oscZenoedited.js"
+              ></script>
+              <meta
+                http-equiv="Content-Type"
+                content="text/html; charset=utf-8"
+              />
+              <style type="text/css">
+                *.unselectable {
+                  -moz-user-select: -moz-none;
+                  -khtml-user-select: none;
+                  -webkit-user-select: none;
+                  -ms-user-select: none;
+                  user-select: none;
+                }
+                #loadCalc {
+                  position: fixed;
+                  z-index: 999;
+                  padding-top: 1%;
+                }
+                #helptopDiv {
+                  padding: 18px;
+                }
+              </style>
+
+              <div
+                id="keyPad"
+                class="calc_container"
+                style="width: 463px !important"
+              >
+                <div id="helptopDiv" class="ui-draggable-handle">
+                  <span id="scientificText"></span>
+                  <span id="normalText" style="display: none"></span>
+                  <div
+                    class="help_back"
+                    id="keyPad_Help"
+                    href="https://www.digialm.com//OnlineAssessment/#nogo"
+                  ></div>
+                  <div
+                    class="help_back"
+                    id="keyPad_Helpback"
+                    href="https://www.digialm.com//OnlineAssessment/#nogo"
+                    style="display: none"
+                  ></div>
+                </div>
+                <div id="calc_min" class="calc_min"></div>
+                <div id="closeButton1" class="calc_close"></div>
+                <!--<div class="calc_close" id="closeButton">X</div>-->
+                <div id="mainContentArea">
+                  <input
+                    type="text"
+                    id="keyPad_UserInput1"
+                    class="keyPad_TextBox1"
+                    readonly="readonly"
+                    onfocus="this.value = this.value;"
+                    style="width: 434px !important"
+                  />
+                  <div class="text_container">
+                    <input
+                      type="text"
+                      id="keyPad_UserInput"
+                      class="keyPad_TextBox"
+                      maxlength="30"
+                      readonly="readonly"
+                      style="width: 434px !important"
+                    />
+                    <span
+                      id="memory"
+                      class="memoryhide importantRuleMemoryScientific"
+                      style="height: 22px"
+                      ><font size="2">M</font></span
+                    >
+                  </div>
+                  <div class="clear"></div>
+                  <div class="left_sec">
+                    <div class="calc_row clear">
+                      <a
+                        id="keyPad_btnMod"
+                        class="keyPad_btnBinaryOp"
+                        style="margin-right: 5px"
+                        >mod</a
+                      >
+                      <div class="degree_radian" style="width: 80px !important">
+                        <input
+                          id="degree_or_radian"
+                          type="radio"
+                          name="degree_or_radian"
+                          value="deg"
+                          checked="checked"
+                        />Deg
+                        <input
+                          id="degree_or_radian"
+                          type="radio"
+                          name="degree_or_radian"
+                          value="rad"
+                        />Rad
+                      </div>
+                      <a
+                        id="keyPad_btnPi"
+                        class="keyPad_btnConst"
+                        style="visibility: hidden; margin-right: 5px"
+                        >π</a
+                      >
+                      <a
+                        id="keyPad_btnE"
+                        class="keyPad_btnConst"
+                        style="visibility: hidden; margin-right: 5px"
+                        >e</a
+                      >
+                      <a
+                        id="keyPad_btnE"
+                        class="keyPad_btnConst"
+                        style="visibility: hidden; margin-right: 5px"
+                        >e</a
+                      >
+                      <a
+                        id="keyPad_MC"
+                        class="keyPad_btnMemoryOp"
+                        style="margin-right: 5px"
+                        >MC</a
+                      >
+                      <a
+                        id="keyPad_MR"
+                        class="keyPad_btnMemoryOp"
+                        style="margin-right: 5px"
+                        >MR</a
+                      >
+                      <a
+                        id="keyPad_MS"
+                        class="keyPad_btnMemoryOp"
+                        style="margin-right: 5px"
+                        >MS</a
+                      >
+                      <a
+                        id="keyPad_M+"
+                        class="keyPad_btnMemoryOp"
+                        style="margin-right: 5px"
+                        >M+</a
+                      >
+                      <a
+                        id="keyPad_M-"
+                        class="keyPad_btnMemoryOp"
+                        style="margin-right: 5px"
+                        >M-</a
+                      >
+                    </div>
+                    <div class="calc_row clear">
+                      <a
+                        id="keyPad_btnSinH"
+                        class="keyPad_btnUnaryOp min"
+                        style="margin-right: 5px"
+                        >sinh</a
+                      >
+                      <a
+                        id="keyPad_btnCosinH"
+                        class="keyPad_btnUnaryOp min"
+                        style="margin-right: 5px"
+                        >cosh</a
+                      >
+                      <a
+                        id="keyPad_btnTgH"
+                        class="keyPad_btnUnaryOp min"
+                        style="margin-right: 5px"
+                        >tanh</a
+                      >
+                      <a
+                        id="keyPad_EXP"
+                        class="keyPad_btnBinaryOp"
+                        style="margin-right: 5px"
+                        >Exp</a
+                      >
+                      <a
+                        id="keyPad_btnOpen"
+                        class="keyPad_btnBinaryOp"
+                        style="margin-right: 5px"
+                        >(</a
+                      >
+                      <a
+                        id="keyPad_btnClose"
+                        class="keyPad_btnBinaryOp"
+                        style="margin-right: 5px"
+                        >)</a
+                      >
+                      <span>
+                        <a
+                          id="keyPad_btnBack"
+                          class="keyPad_btnCommand calc_arrows"
+                          style="margin-right: 5px"
+                        >
+                          <div
+                            id="calcBackBtn"
+                            style="position: relative; top: -3px"
+                          >
+                            ←
+                          </div>
+                        </a>
+                        <a
+                          id="keyPad_btnAllClr"
+                          class="keyPad_btnCommand"
+                          style="margin-right: 5px"
+                          >C</a
+                        >
+                        <a
+                          id="keyPad_btnInverseSign"
+                          class="keyPad_btnUnaryOp"
+                          style="margin-right: 5px"
+                          >+/-</a
+                        >
+                        <a
+                          id="keyPad_btnSquareRoot"
+                          class="keyPad_btnUnaryOp"
+                          style="margin-right: 5px"
+                        >
+                          <div style="position: relative; top: 1px">√</div>
+                        </a>
+                      </span>
+                    </div>
+                    <div class="calc_row clear" style="margin-top: 5px">
+                      <a
+                        id="keyPad_btnAsinH"
+                        class="keyPad_btnUnaryOp min"
+                        style="margin-right: 5px"
+                        ><span class="baseele">sinh</span
+                        ><span class="superscript">-1</span></a
+                      >
+                      <a
+                        id="keyPad_btnAcosH"
+                        class="keyPad_btnUnaryOp min"
+                        style="margin-right: 5px"
+                        ><span class="baseele">cosh</span
+                        ><span class="superscript">-1</span></a
+                      >
+                      <a
+                        id="keyPad_btnAtanH"
+                        class="keyPad_btnUnaryOp min"
+                        style="margin-right: 5px"
+                        ><span class="baseele">tanh</span
+                        ><span class="superscript">-1</span></a
+                      >
+                      <a
+                        id="keyPad_btnLogBase2"
+                        class="keyPad_btnUnaryOp"
+                        style="margin-right: 5px"
+                        ><span class="baseele">log</span
+                        ><span class="subscript">2</span
+                        ><span class="baseele">x</span></a
+                      >
+                      <a
+                        id="keyPad_btnLn"
+                        class="keyPad_btnUnaryOp"
+                        style="margin-right: 5px"
+                        >ln</a
+                      >
+                      <a
+                        id="keyPad_btnLg"
+                        class="keyPad_btnUnaryOp"
+                        style="margin-right: 5px"
+                        >log</a
+                      >
+                      <a
+                        id="keyPad_btn7"
+                        class="keyPad_btnNumeric"
+                        style="margin-right: 5px"
+                        >7</a
+                      >
+                      <a
+                        id="keyPad_btn8"
+                        class="keyPad_btnNumeric"
+                        style="margin-right: 5px"
+                        >8</a
+                      >
+                      <a
+                        id="keyPad_btn9"
+                        class="keyPad_btnNumeric"
+                        style="margin-right: 5px"
+                        >9</a
+                      >
+                      <a
+                        id="keyPad_btnDiv"
+                        class="keyPad_btnBinaryOp"
+                        style="margin-right: 5px"
+                        >/</a
+                      >
+                      <a
+                        id="keyPad_%"
+                        class="keyPad_btnBinaryOp"
+                        style="margin-right: 5px"
+                        >%</a
+                      >
+                    </div>
+                    <div class="calc_row clear">
+                      <a
+                        id="keyPad_btnPi"
+                        class="keyPad_btnConst"
+                        style="margin-right: 5px"
+                        >π</a
+                      >
+                      <a
+                        id="keyPad_btnE"
+                        class="keyPad_btnConst"
+                        style="margin-right: 5px"
+                        >e</a
+                      >
+                      <a
+                        id="keyPad_btnFact"
+                        class="keyPad_btnUnaryOp"
+                        style="margin-right: 5px"
+                        >n!</a
+                      >
+                      <a
+                        id="keyPad_btnYlogX"
+                        class="keyPad_btnBinaryOp"
+                        style="margin-right: 5px"
+                        ><span class="baseele">log</span
+                        ><span class="subscript">y</span
+                        ><span class="baseele">x</span></a
+                      >
+                      <a
+                        id="keyPad_btnExp"
+                        class="keyPad_btnUnaryOp"
+                        style="margin-right: 5px"
+                        ><span class="baseele">e</span
+                        ><span class="superscript">x</span></a
+                      >
+                      <a
+                        id="keyPad_btn10X"
+                        class="keyPad_btnUnaryOp"
+                        style="margin-right: 5px"
+                        ><span class="baseele">10</span
+                        ><span class="superscript">x</span></a
+                      >
+
+                      <a
+                        id="keyPad_btn4"
+                        class="keyPad_btnNumeric"
+                        style="margin-right: 5px"
+                        >4</a
+                      >
+                      <a
+                        id="keyPad_btn5"
+                        class="keyPad_btnNumeric"
+                        style="margin-right: 5px"
+                        >5</a
+                      >
+                      <a
+                        id="keyPad_btn6"
+                        class="keyPad_btnNumeric"
+                        style="margin-right: 5px"
+                        >6</a
+                      >
+                      <a
+                        id="keyPad_btnMult"
+                        class="keyPad_btnBinaryOp"
+                        style="margin-right: 5px"
+                        ><div
+                          id="calcMult"
+                          style="position: relative; top: 3px; font-size: 20px"
+                        >
+                          *
+                        </div></a
+                      >
+                      <a
+                        id="keyPad_btnInverse"
+                        class="keyPad_btnUnaryOp"
+                        style="margin-right: 5px"
+                        ><span class="baseele">1/x</span></a
+                      >
+                    </div>
+                    <div class="calc_row clear">
+                      <a
+                        id="keyPad_btnSin"
+                        class="keyPad_btnUnaryOp min"
+                        style="margin-right: 5px"
+                        >sin</a
+                      >
+                      <a
+                        id="keyPad_btnCosin"
+                        class="keyPad_btnUnaryOp min"
+                        style="margin-right: 5px"
+                        >cos</a
+                      >
+                      <a
+                        id="keyPad_btnTg"
+                        class="keyPad_btnUnaryOp min"
+                        style="margin-right: 5px"
+                        >tan</a
+                      >
+                      <a
+                        id="keyPad_btnYpowX"
+                        class="keyPad_btnBinaryOp"
+                        style="margin-right: 5px"
+                        ><span class="baseele">x</span
+                        ><span class="superscript">y</span></a
+                      >
+                      <a
+                        id="keyPad_btnCube"
+                        class="keyPad_btnUnaryOp"
+                        style="margin-right: 5px"
+                        ><span class="baseele">x</span
+                        ><span class="superscript">3</span></a
+                      >
+                      <a
+                        id="keyPad_btnSquare"
+                        class="keyPad_btnUnaryOp"
+                        style="margin-right: 5px"
+                        ><span class="baseele">x</span
+                        ><span class="superscript">2</span></a
+                      >
+                      <a
+                        id="keyPad_btn1"
+                        class="keyPad_btnNumeric"
+                        style="margin-right: 5px"
+                        >1</a
+                      >
+                      <a
+                        id="keyPad_btn2"
+                        class="keyPad_btnNumeric"
+                        style="margin-right: 5px"
+                        >2</a
+                      >
+                      <a
+                        id="keyPad_btn3"
+                        class="keyPad_btnNumeric"
+                        style="margin-right: 5px"
+                        >3</a
+                      >
+                      <a
+                        id="keyPad_btnMinus"
+                        class="keyPad_btnBinaryOp"
+                        style="margin-right: 5px"
+                        ><div
+                          id="calcMinus"
+                          style="position: relative; top: -1px; font-size: 20px"
+                        >
+                          -
+                        </div></a
+                      >
+                    </div>
+                    <div class="calc_row clear">
+                      <a
+                        id="keyPad_btnAsin"
+                        class="keyPad_btnUnaryOp min"
+                        style="margin-right: 5px"
+                        ><span class="baseele">sin</span
+                        ><span class="superscript">-1</span></a
+                      >
+                      <a
+                        id="keyPad_btnAcos"
+                        class="keyPad_btnUnaryOp min"
+                        style="margin-right: 5px"
+                        ><span class="baseele">cos</span
+                        ><span class="superscript">-1</span></a
+                      >
+                      <a
+                        id="keyPad_btnAtan"
+                        class="keyPad_btnUnaryOp min"
+                        style="margin-right: 5px"
+                        ><span class="baseele">tan</span
+                        ><span class="superscript">-1</span></a
+                      >
+                      <a
+                        id="keyPad_btnYrootX"
+                        class="keyPad_btnBinaryOp"
+                        style="margin-right: 5px"
+                        ><span class="superscript" style="top: -8px">y</span
+                        ><span
+                          class="baseele"
+                          style="font-size: 1.2em; margin: -6px 0 0 -9px"
+                          >√x</span
+                        ></a
+                      >
+                      <a
+                        id="keyPad_btnCubeRoot"
+                        class="keyPad_btnUnaryOp"
+                        style="margin-right: 5px"
+                        ><font size="3">∛ </font></a
+                      >
+                      <a
+                        id="keyPad_btnAbs"
+                        class="keyPad_btnUnaryOp"
+                        style="margin-right: 5px"
+                        ><span class="baseele">|x|</span></a
+                      >
+                      <a
+                        id="keyPad_btn0"
+                        class="keyPad_btnNumeric"
+                        style="width: 76px !important"
+                        >0</a
+                      >
+                      <a
+                        id="keyPad_btnDot"
+                        class="keyPad_btnNumeric"
+                        style="margin-right: 5px"
+                        >.</a
+                      >
+                      <a
+                        id="keyPad_btnPlus"
+                        class="keyPad_btnBinaryOp"
+                        style="margin-right: 5px"
+                        >+</a
+                      >
+                      <a
+                        id="keyPad_btnEnter"
+                        class="keyPad_btnCommand"
+                        style="margin-right: 5px"
+                        ><div id="calcEnter" style="margin-bottom: 2px">
+                          =
+                        </div></a
+                      >
+                    </div>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="modal-inst" class="modal-overlay">
+      <div class="modal-content">
+        <div class="modal-header">
+          Instructions
+          <span style="cursor: pointer" onclick="closeModal('inst')"
+            >Close &times;</span
+          >
+        </div>
+        <div class="modal-body">
+          <h3>General Instructions</h3>
+          <p>1. Total duration is 180 minutes.</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="modal-qp" class="modal-overlay">
+      <div class="modal-content">
+        <div class="modal-header">
+          Question Paper
+          <span style="cursor: pointer" onclick="closeModal('qp')"
+            >Close &times;</span
+          >
+        </div>
+        <div class="modal-body">
+          <div id="full-paper-view"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      /* --- 1. CONFIG & DB --- */
+      // Right marks array (1-based indexing, index 0 unused)
+      const rightMarks = [
+        0, // index 0 unused
+        ...Array(10).fill(1), // Questions 1-10: 1 mark
+        ...Array(30).fill(2), // Questions 11-30: 2 marks
+        ...Array(10).fill(1), // Questions 41-50: 1 mark
+        ...Array(10).fill(2), // Questions 51-60: 2 marks
+      ];
+
+      // Wrong marks array (1-based indexing, index 0 unused)
+      const wrongMarks = [
+        0, // index 0 unused
+        ...Array(10).fill("1/3"), // Questions 1-10: 1/3 mark
+        ...Array(20).fill("2/3"), // Questions 11-30: 2/3 mark
+        ...Array(30).fill("0"), // Questions 31-60: 0 marks
+      ];
+
+      const sectionConfig = {
+        A: { start: 1, end: 30, type: "MCQ" },
+        B: { start: 31, end: 40, type: "MSQ" },
+        C: { start: 41, end: 60, type: "NAT" },
+      };
+
+      const questionDB = [];
+
+      // --- EDITABLE QUESTIONS ---
+
+      // Questions Data for JAM 2022 Mathematical Statistics (MS)
+      const questions = [
+        {
+          text: `Let \\( \\{a_n\\}_{n\\ge1} \\) be a sequence of non-zero real numbers. Then which one of the following statements is true?`,
+          options: [
+            `If \\( \\left\\{\\frac{a_{n+1}}{a_n}\\right\\}_{n\\ge1} \\) is a convergent sequence, then \\( \\{a_n\\}_{n\\ge1} \\) is a convergent sequence`,
+            `If \\( \\{a_n\\}_{n\\ge1} \\) is a bounded sequence, then \\( \\{a_n\\}_{n\\ge1} \\) is a convergent sequence`,
+            `If \\( |a_{n+2}-a_{n+1}| \\le \\frac{3}{4}|a_{n+1}-a_n| \\) for all \\( n\\ge1 \\), then \\( \\{a_n\\}_{n\\ge1} \\) is a Cauchy sequence`,
+            `If \\( \\{|a_n|\\}_{n\\ge1} \\) is a Cauchy sequence, then \\( \\{a_n\\}_{n\\ge1} \\) is also a Cauchy sequence`,
+          ],
+        },
+        {
+          text: `Let \\( f:\\mathbb{R}\\to\\mathbb{R} \\) be the function defined by
+          <br><br>
+          <div style="text-align: center;">
+            \\( f(x) = \\begin{cases} \\lim_{h\\to0} \\frac{(x+h)\\sin(\\frac{1}{x+h}) - x\\sin\\frac{1}{x}}{h}, & x \\ne 0 \\\\ 0, & x = 0 \\end{cases} \\)
+          </div>
+          <br>
+          Then which one of the following statements is NOT true?`,
+          options: [
+            `\\( f(\\frac{2}{\\pi}) = 1 \\)`,
+            `\\( f(\\frac{1}{\\pi}) = \\frac{1}{\\pi} \\)`,
+            `\\( f(-\\frac{2}{\\pi}) = -1 \\)`,
+            `\\( f \\) is not continuous at \\( x=0 \\)`,
+          ],
+        },
+        {
+          text: `Let \\( f:\\mathbb{R}\\to\\mathbb{R} \\) be the function defined by
+          <br><br>
+          <div style="text-align: center;">
+            \\( f(x) = \\det\\begin{pmatrix} 1+x & 9 & 9 \\\\ 9 & 1+x & 9 \\\\ 9 & 9 & 1+x \\end{pmatrix} \\)
+          </div>
+          <br>
+          Then the maximum value of \\( f \\) on the interval \\( [9, 10] \\) equals`,
+          options: [`118`, `112`, `114`, `116`],
+        },
+        {
+          text: `Let \\( A \\) and \\( B \\) be two events such that \\( 0 < P(A) < 1 \\) and \\( 0 < P(B) < 1 \\). Then which one of the following statements is NOT true?`,
+          options: [
+            `If \\( P(A|B) > P(A) \\), then \\( P(B|A) > P(B) \\)`,
+            `If \\( P(A\\cup B) = 1 \\), then \\( A \\) and \\( B \\) cannot be independent`,
+            `If \\( P(A|B) > P(A) \\), then \\( P(A^c|B) < P(A^c) \\)`,
+            `If \\( P(A|B) > P(A) \\), then \\( P(A^c|B^c) < P(A^c) \\)`,
+          ],
+        },
+        {
+          text: `If \\( M(t) \\), \\( t\\in\\mathbb{R} \\), is the moment generating function of a random variable, then which one of the following is NOT the moment generating function of any random variable?`,
+          options: [
+            `\\( \\frac{5e^{-5t}}{1-4t^2} M(t), \\quad |t| < \\frac{1}{2} \\)`,
+            `\\( e^{-t} M(t), \\quad t\\in\\mathbb{R} \\)`,
+            `\\( \\frac{1+e^t}{2(2-e^t)} M(t), \\quad t < \\ln 2 \\)`,
+            `\\( M(4t), \\quad t\\in\\mathbb{R} \\)`,
+          ],
+        },
+        {
+          text: `Let \\( X \\) be a random variable having binomial distribution with parameters \\( n(>1) \\) and \\( p(0<p<1) \\). Then \\( E\\left(\\frac{1}{1+X}\\right) \\) equals`,
+          options: [
+            `\\( \\frac{1-(1-p)^{n+1}}{(n+1)p} \\)`,
+            `\\( \\frac{1-p^{n+1}}{(n+1)(1-p)} \\)`,
+            `\\( \\frac{(1-p)^{n+1}}{n(1-p)} \\)`,
+            `\\( \\frac{1-p^n}{(n+1)p} \\)`,
+          ],
+        },
+        {
+          text: `Let \\( (X, Y) \\) be a random vector having the joint probability density function
+          <br><br>
+          <div style="text-align: center;">
+            \\( f(x,y) = \\begin{cases} \\frac{\\sqrt{2}}{\\sqrt{\\pi}} e^{-2x} e^{-\\frac{(y-x)^2}{2}}, & 0 < x < \\infty, -\\infty < y < \\infty \\\\ 0, & \\text{otherwise.} \\end{cases} \\)
+          </div>
+          <br>
+          Then \\( E(Y) \\) equals`,
+          options: [`\\( \\frac{1}{2} \\)`, `2`, `1`, `\\( \\frac{1}{4} \\)`],
+        },
+        {
+          text: `Let \\( X_1 \\) and \\( X_2 \\) be two independent and identically distributed discrete random variables having the probability mass function
+          <br><br>
+          <div style="text-align: center;">
+            \\( f(x) = \\begin{cases} (\\frac{1}{2})^x, & x = 1, 2, 3, \\dots \\\\ 0, & \\text{otherwise.} \\end{cases} \\)
+          </div>
+          <br>
+          Then \\( P(\\min\\{X_1, X_2\\} \\ge 5) \\) equals`,
+          options: [
+            `\\( \\frac{1}{256} \\)`,
+            `\\( \\frac{1}{512} \\)`,
+            `\\( \\frac{1}{64} \\)`,
+            `\\( \\frac{9}{256} \\)`,
+          ],
+        },
+        {
+          text: `Let \\( X_1, X_2, \\dots, X_n \\) \\( (n\\ge2) \\) be a random sample from \\( Exp(\\frac{1}{\\theta}) \\) distribution, where \\( \\theta > 0 \\) is unknown. If \\( \\overline{X} = \\frac{1}{n} \\sum_{i=1}^n X_i \\), then which one of the following statements is NOT true?`,
+          options: [
+            `\\( \\overline{X} \\) is the uniformly minimum variance unbiased estimator of \\( \\theta \\)`,
+            `\\( \\overline{X}^2 \\) is the uniformly minimum variance unbiased estimator of \\( \\theta^2 \\)`,
+            `\\( \\frac{n}{n+1} \\overline{X}^2 \\) is the uniformly minimum variance unbiased estimator of \\( \\theta^2 \\)`,
+            `\\( Var(E(X_n|\\overline{X})) \\le Var(X_n) \\)`,
+          ],
+        },
+        {
+          text: `Let \\( X_1, X_2, \\dots, X_n \\) \\( (n\\ge3) \\) be a random sample from a \\( N(\\mu, \\sigma^2) \\) distribution, where \\( \\mu\\in\\mathbb{R} \\) and \\( \\sigma > 0 \\) are both unknown. Then which one of the following is a simple null hypothesis?`,
+          options: [
+            `\\( H_0: \\mu < 5, \\sigma^2 = 3 \\)`,
+            `\\( H_0: \\mu = 5, \\sigma^2 > 3 \\)`,
+            `\\( H_0: \\mu = 5, \\sigma^2 = 3 \\)`,
+            `\\( H_0: \\mu = 5 \\)`,
+          ],
+        },
+        {
+          text: `The value of
+          <br><br>
+          <div style="text-align: center;">
+            \\( \\lim_{n\\to\\infty} \\frac{6}{n+2} \\left\\{ \\left(2+\\frac{1}{n}\\right)^2 + \\left(2+\\frac{2}{n}\\right)^2 + \\dots + \\left(2+\\frac{n-1}{n}\\right)^2 \\right\\} \\)
+          </div>
+          <br>
+          equals`,
+          options: [`38`, `36`, `32`, `34`],
+        },
+        {
+          text: `Let \\( f:\\mathbb{R}^2\\to\\mathbb{R} \\) be the function defined by
+          <br><br>
+          <div style="text-align: center;">
+            \\( f(x,y) = \\begin{cases} x^2 \\sin \\frac{1}{x} + y^2 \\cos y, & x \\ne 0 \\\\ 0, & x = 0 \\end{cases} \\)
+          </div>
+          <br>
+          Then which one of the following statements is NOT true?`,
+          options: [
+            `\\( f \\) is continuous at \\( (0,0) \\)`,
+            `The partial derivative of \\( f \\) with respect to \\( x \\) is not continuous at \\( (0,0) \\)`,
+            `The partial derivative of \\( f \\) with respect to \\( y \\) is continuous at \\( (0,0) \\)`,
+            `\\( f \\) is not differentiable at \\( (0,0) \\)`,
+          ],
+        },
+        {
+          text: `Let \\( f:[1,2]\\to\\mathbb{R} \\) be the function defined by
+          <br><br>
+          <div style="text-align: center;">
+            \\( f(t) = \\int_{1}^{t} \\sqrt{x^2 e^{x^2} - 1} \\, dx \\)
+          </div>
+          <br>
+          Then the arc length of the graph of \\( f \\) over the interval \\( [1,2] \\) equals`,
+          options: [
+            `\\( e^2 - \\sqrt{e} \\)`,
+            `\\( e - \\sqrt{e} \\)`,
+            `\\( e^2 - e \\)`,
+            `\\( e^2 - 1 \\)`,
+          ],
+        },
+        {
+          text: `Let \\( F:[0,2]\\to\\mathbb{R} \\) be the function defined by
+          <br><br>
+          <div style="text-align: center;">
+            \\( F(x) = \\int_{x^2}^{x+2} e^{x[t]} \\, dt \\)
+          </div>
+          <br>
+          where \\( [t] \\) denotes the greatest integer less than or equal to \\( t \\). Then the value of the derivative of \\( F \\) at \\( x=1 \\) equals`,
+          options: [
+            `\\( e^3 + 2e^2 - e \\)`,
+            `\\( e^3 - e^2 + 2e \\)`,
+            `\\( e^3 - 2e^2 + e \\)`,
+            `\\( e^3 + 2e^2 + e \\)`,
+          ],
+        },
+        {
+          text: `Let the system of equations
+          <br><br>
+          \\( x + ay + z = 1 \\) <br>
+          \\( 2x + 4y + z = -b \\) <br>
+          \\( 3x + y + 2z = b+2 \\)
+          <br><br>
+          have infinitely many solutions, where \\( a \\) and \\( b \\) are real constants. Then the value of \\( 2a + 8b \\) equals`,
+          options: [`-11`, `-10`, `-13`, `-14`],
+        },
+        {
+          text: `Let
+          <br><br>
+          <div style="text-align: center;">
+            \\( A = \\begin{pmatrix} 0 & 1 & 0 \\\\ 1 & 0 & 0 \\\\ 0 & 1 & 1 \\end{pmatrix} \\)
+          </div>
+          <br>
+          Then the sum of all the elements of \\( A^{100} \\) equals`,
+          options: [`101`, `103`, `102`, `100`],
+        },
+        {
+          text: `Suppose that four persons enter a lift on the ground floor of a building. There are seven floors above the ground floor and each person independently chooses her exit floor as one of these seven floors. If each of them chooses the topmost floor with probability \\( \\frac{1}{3} \\) and each of the remaining floors with an equal probability, then the probability that no two of them exit at the same floor equals`,
+          options: [
+            `\\( \\frac{200}{729} \\)`,
+            `\\( \\frac{220}{729} \\)`,
+            `\\( \\frac{240}{729} \\)`,
+            `\\( \\frac{180}{729} \\)`,
+          ],
+        },
+        {
+          text: `A year is chosen at random from the set of years {2012, 2013, ..., 2021}. From the chosen year, a month is chosen at random and from the chosen month, a day is chosen at random. Given that the chosen day is the \\( 29^{th} \\) of a month, the conditional probability that the chosen month is February equals`,
+          options: [
+            `\\( \\frac{279}{9965} \\)`,
+            `\\( \\frac{289}{9965} \\)`,
+            `\\( \\frac{269}{9965} \\)`,
+            `\\( \\frac{259}{9965} \\)`,
+          ],
+        },
+        {
+          text: `Suppose that a fair coin is tossed repeatedly and independently. Let \\( X \\) denote the number of tosses required to obtain for the first time a tail that is immediately preceded by a head. Then \\( E(X) \\) and \\( P(X > 4) \\), respectively, are`,
+          options: [
+            `4 and \\( \\frac{5}{16} \\)`,
+            `4 and \\( \\frac{11}{16} \\)`,
+            `6 and \\( \\frac{5}{16} \\)`,
+            `6 and \\( \\frac{11}{16} \\)`,
+          ],
+        },
+        {
+          text: `Let \\( X \\) be a random variable with the moment generating function
+          <br><br>
+          <div style="text-align: center;">
+            \\( M(t) = \\frac{1}{(1-4t)^5}, \\quad t < \\frac{1}{4} \\)
+          </div>
+          <br>
+          Then the lower bounds for \\( P(X < 40) \\), using Chebyshev's inequality and Markov's inequality, respectively, are`,
+          options: [
+            `\\( \\frac{4}{5} \\) and \\( \\frac{5}{6} \\)`,
+            `\\( \\frac{5}{6} \\) and \\( \\frac{4}{5} \\)`,
+            `\\( \\frac{1}{2} \\) and \\( \\frac{1}{2} \\)`,
+            `\\( \\frac{5}{6} \\) and \\( \\frac{5}{6} \\)`,
+          ],
+        },
+        {
+          text: `In a store, the daily demand for milk (in litres) is a random variable having \\( Exp(\\lambda) \\) distribution, where \\( \\lambda > 0 \\). At the beginning of the day, the store purchases \\( c (>0) \\) litres of milk at a fixed price \\( b (>0) \\) per litre. The milk is then sold to the customers at a fixed price \\( s (>b) \\) per litre. At the end of the day, the unsold milk is discarded. Then the value of \\( c \\) that maximizes the expected net profit for the store equals`,
+          options: [
+            `\\( -\\frac{1}{\\lambda} \\ln(\\frac{b}{s}) \\)`,
+            `\\( -\\frac{1}{\\lambda} \\ln(\\frac{b}{s+b}) \\)`,
+            `\\( -\\frac{1}{\\lambda} \\ln(\\frac{s-b}{s}) \\)`,
+            `\\( -\\frac{1}{\\lambda} \\ln(\\frac{s}{s+b}) \\)`,
+          ],
+        },
+        {
+          text: `Let \\( X_1, X_2 \\) and \\( X_3 \\) be three independent and identically distributed random variables having \\( U(0,1) \\) distribution. Then \\( E\\left[\\left(\\frac{\\ln X_1}{\\ln X_1 X_2 X_3}\\right)^2\\right] \\) equals`,
+          options: [
+            `\\( \\frac{1}{6} \\)`,
+            `\\( \\frac{1}{3} \\)`,
+            `\\( \\frac{1}{8} \\)`,
+            `\\( \\frac{1}{4} \\)`,
+          ],
+        },
+        {
+          text: `Let \\( (X,Y) \\) be a random vector having bivariate normal distribution with parameters \\( E(X)=0 \\), \\( Var(X)=1 \\), \\( E(Y)=-1 \\), \\( Var(Y)=4 \\) and \\( \\rho(X,Y) = -\\frac{1}{2} \\), where \\( \\rho(X,Y) \\) denotes the correlation coefficient between \\( X \\) and \\( Y \\). Then \\( P(X+Y > 1 | 2X-Y=1) \\) equals`,
+          options: [
+            `\\( \\Phi(-\\frac{1}{2}) \\)`,
+            `\\( \\Phi(-\\frac{1}{3}) \\)`,
+            `\\( \\Phi(-\\frac{1}{4}) \\)`,
+            `\\( \\Phi(-\\frac{4}{3}) \\)`,
+          ],
+        },
+        {
+          text: `Let \\( \\{X_n\\}_{n\\ge1} \\) be a sequence of independent and identically distributed random variables having the common probability density function
+          <br><br>
+          <div style="text-align: center;">
+            \\( f(x) = \\begin{cases} \\frac{2}{x^3}, & x \\ge 1 \\\\ 0, & \\text{otherwise} \\end{cases} \\)
+          </div>
+          <br>
+          If \\( \\lim_{n\\to\\infty} P\\left( \\left| \\sum_{i=1}^n X_i - n\\delta \\right| < \\epsilon \\right) = 1 \\) for all \\( \\epsilon > 0 \\), then \\( \\delta \\) equals`,
+          options: [`4`, `2`, `\\( \\ln 4 \\)`, `\\( \\ln 2 \\)`],
+        },
+        {
+          text: `Let 0.2, 1.2, 1.4, 0.3, 0.9, 0.7 be the observed values of a random sample of size 6 from a continuous distribution with the probability density function
+          <br><br>
+          <div style="text-align: center;">
+            \\( f(x) = \\begin{cases} 1, & 0 < x \\le \\frac{1}{2} \\\\ \\frac{1}{2\\theta-1}, & \\frac{1}{2} < x \\le \\theta \\end{cases} \\)
+          </div>
+          <br>
+          where \\( \\theta > \\frac{1}{2} \\) is unknown. Then the maximum likelihood estimate and the method of moments estimate of \\( \\theta \\), respectively, are`,
+          options: [
+            `\\( \\frac{7}{5} \\) and 2`,
+            `\\( \\frac{47}{60} \\) and \\( \\frac{32}{15} \\)`,
+            `\\( \\frac{7}{5} \\) and \\( \\frac{32}{15} \\)`,
+            `\\( \\frac{7}{5} \\) and \\( \\frac{47}{60} \\)`,
+          ],
+        },
+        {
+          text: `For \\( n=1,2,3,\\dots \\), let the joint moment generating function of \\( (X, Y_n) \\) be
+          <br><br>
+          <div style="text-align: center;">
+            \\( M_{X,Y_n}(t_1, t_2) = e^{\\frac{t_1^2}{2}}(1-2t_2)^{-\\frac{n}{2}}, \\quad t_1 \\in \\mathbb{R}, t_2 < \\frac{1}{2} \\)
+          </div>
+          <br>
+          If \\( T_n = \\frac{\\sqrt{n}X}{\\sqrt{Y_n}} \\), \\( n\\ge1 \\), then which one of the following statements is true?`,
+          options: [
+            `The minimum value of \\( n \\) for which \\( Var(T_n) \\) is finite is 2`,
+            `\\( E(T_{10}^3) = 10 \\)`,
+            `\\( Var(X+Y_4) = 7 \\)`,
+            `\\( \\lim_{n\\to\\infty} P(|T_n| > 3) = 1 - \\frac{\\sqrt{2}}{\\sqrt{\\pi}} \\int_{0}^{3} e^{-\\frac{t^2}{2}} dt \\)`,
+          ],
+        },
+        {
+          text: `Let \\( X_{(1)} < X_{(2)} < \\dots < X_{(9)} \\) be the order statistics corresponding to a random sample of size 9 from \\( U(0,1) \\) distribution. Then which one of the following statements is NOT true?`,
+          options: [
+            `\\( E\\left(\\frac{X_{(9)}}{1-X_{(9)}}\\right) \\) is finite`,
+            `\\( E(X_{(5)}) = 0.5 \\)`,
+            `The median of \\( X_{(5)} \\) is 0.5`,
+            `The mode of \\( X_{(5)} \\) is 0.5`,
+          ],
+        },
+        {
+          text: `Let \\( X_1, X_2, \\dots, X_{16} \\) be a random sample from a \\( N(4\\mu, 1) \\) distribution and \\( Y_1, Y_2, \\dots, Y_8 \\) be a random sample from a \\( N(\\mu, 1) \\) distribution, where \\( \\mu\\in\\mathbb{R} \\) is unknown. Assume that the two random samples are independent. If you are looking for a confidence interval for \\( \\mu \\) based on the statistic \\( 8\\overline{X} + \\overline{Y} \\), where \\( \\overline{X} = \\frac{1}{16}\\sum_{i=1}^{16}X_i \\) and \\( \\overline{Y} = \\frac{1}{8}\\sum_{i=1}^{8}Y_i \\), then which one of the following statements is true?`,
+          options: [
+            `There exists a 90% confidence interval for \\( \\mu \\) of length less than 0.1`,
+            `There exists a 90% confidence interval for \\( \\mu \\) of length greater than 0.3`,
+            `\\( \\left[ \\frac{8\\overline{X}+\\overline{Y}}{33} - \\frac{1.645}{2\\sqrt{66}}, \\frac{8\\overline{X}+\\overline{Y}}{33} + \\frac{1.645}{2\\sqrt{66}} \\right] \\) is the unique 90% confidence interval for \\( \\mu \\)`,
+            `\\( \\mu \\) always belongs to its 90% confidence interval`,
+          ],
+        },
+        {
+          text: `Let \\( X_1, X_2, X_3, X_4 \\) be a random sample from a distribution with the probability mass function
+          <br><br>
+          <div style="text-align: center;">
+            \\( f(x) = \\begin{cases} \\theta^x(1-\\theta)^{1-x}, & x=0, 1 \\\\ 0, & \\text{otherwise} \\end{cases} \\)
+          </div>
+          <br>
+          where \\( \\theta\\in(0,1) \\) is unknown. Let \\( 0 < \\alpha \\le 1 \\). To test the hypothesis \\( H_0: \\theta = \\frac{1}{2} \\) against \\( H_1: \\theta > \\frac{1}{2} \\), consider the size \\( \\alpha \\) test that rejects \\( H_0 \\) if and only if \\( \\sum_{i=1}^4 X_i \\ge k_\\alpha \\) for some \\( k_\\alpha \\in \\{0,1,2,3,4\\} \\). Then for which one of the following values of \\( \\alpha \\), the size \\( \\alpha \\) test does NOT exist?`,
+          options: [
+            `\\( \\frac{1}{16} \\)`,
+            `\\( \\frac{1}{4} \\)`,
+            `\\( \\frac{11}{16} \\)`,
+            `\\( \\frac{5}{16} \\)`,
+          ],
+        },
+        {
+          text: `Let \\( X_1, X_2, X_3, X_4 \\) be a random sample from a Poisson distribution with unknown mean \\( \\lambda > 0 \\). For testing the hypothesis \\( H_0: \\lambda = 1 \\) against \\( H_1: \\lambda = 1.5 \\), let \\( \\beta \\) denote the power of the test that rejects \\( H_0 \\) if and only if \\( \\sum_{i=1}^4 X_i \\ge 5 \\). Then which one of the following statements is true?`,
+          options: [
+            `\\( \\beta > 0.80 \\)`,
+            `\\( 0.75 < \\beta \\le 0.80 \\)`,
+            `\\( 0.70 < \\beta \\le 0.75 \\)`,
+            `\\( 0.65 < \\beta \\le 0.70 \\)`,
+          ],
+        },
+        {
+          text: `Let \\( \\{a_n\\}_{n\\ge1} \\) be a sequence of real numbers such that \\( a_n = \\frac{1}{3^n} \\) for all \\( n\\ge1 \\). Then which of the following statements is/are true?`,
+          options: [
+            `\\( \\sum_{n=1}^{\\infty} (-1)^{n+1} a_n \\) is a convergent series`,
+            `\\( \\sum_{n=1}^{\\infty} \\frac{(-1)^{n+1}}{n} (a_1 + a_2 + \\dots + a_n) \\) is a convergent series`,
+            `The radius of convergence of the power series \\( \\sum_{n=1}^{\\infty} a_n x^n \\) is 3`,
+            `\\( \\sum_{n=1}^{\\infty} a_n \\sin \\frac{1}{a_n} \\) is a convergent series`,
+          ],
+        },
+        {
+          text: `Let \\( f:\\mathbb{R}^2\\to\\mathbb{R} \\) be the function defined by
+          <br><br>
+          <div style="text-align: center;">
+            \\( f(x,y) = 8(x^2-y^2) - x^4 + y^4 \\)
+          </div>
+          <br>
+          Then which of the following statements is/are true?`,
+          options: [
+            `\\( f \\) has 9 critical points`,
+            `\\( f \\) has a saddle point at (2,2)`,
+            `\\( f \\) has a local maximum at (-2,0)`,
+            `\\( f \\) has a local minimum at (0,-2)`,
+          ],
+        },
+        {
+          text: `If \\( n\\ge2 \\), then which of the following statements is/are true?`,
+          options: [
+            `If \\( A \\) and \\( B \\) are \\( n\\times n \\) real orthogonal matrices such that \\( \\det(A) + \\det(B) = 0 \\), then \\( A+B \\) is a singular matrix`,
+            `If \\( A \\) is an \\( n\\times n \\) real matrix such that \\( I_n + A \\) is non-singular, then \\( I_n - A^2 \\) equals \\( (I_n + A)^{-1}(I_n - A) \\)`,
+            `If \\( A \\) is an \\( n\\times n \\) real orthogonal matrix, then \\( \\det(A - \\lambda I_n) \\ne 0 \\) for all \\( \\lambda \\in \\{x\\in\\mathbb{R}: x \\ne \\pm 1\\} \\)`,
+            `If \\( A \\) is an \\( n\\times n \\) real matrix such that \\( I_n+A \\) is non-singular, then \\( A(I_n+A)^{-1} = (I_n+A)^{-1}A \\)`,
+          ],
+        },
+        {
+          text: `Let \\( \\Omega = \\{1, 2, 3, \\dots\\} \\) be the sample space of a random experiment and suppose that all subsets of \\( \\Omega \\) are events. Further, let \\( P \\) be a probability function such that \\( P(\\{i\\}) > 0 \\) for all \\( i\\in\\Omega \\). Then which of the following statements is/are true?`,
+          options: [
+            `For every \\( \\epsilon > 0 \\), there exists an event \\( A \\) such that \\( 0 < P(A) < \\epsilon \\)`,
+            `There exists a sequence of disjoint events \\( \\{A_k\\}_{k\\ge1} \\) with \\( P(A_k) \\ge 10^{-6} \\) for all \\( k\\ge1 \\)`,
+            `There exists \\( j\\in\\Omega \\) such that \\( P(\\{j\\}) \\ge P(\\{i\\}) \\) for all \\( i\\in\\Omega \\)`,
+            `Let \\( \\{A_k\\}_{k\\ge1} \\) be a sequence of events such that \\( \\sum_{k=1}^{\\infty} P(A_k) < \\infty \\). Then for each \\( i\\in\\Omega \\), there exists \\( N\\ge1 \\) (which may depend on \\( i \\)) such that \\( i \\notin \\bigcup_{k=N}^{\\infty} A_k \\)`,
+          ],
+        },
+        {
+          text: `A university bears the yearly medical expenses of each of its employees up to a maximum of Rs. 1000. If the yearly medical expenses of an employee exceed Rs. 1000, then the employee gets the excess amount from an insurance policy up to a maximum of Rs. 500. If the yearly medical expenses of a randomly selected employee has \\( U(250, 1750) \\) distribution and \\( Y \\) denotes the amount the employee gets from the insurance policy, then which of the following statements is/are true?`,
+          options: [
+            `\\( E(Y) = \\frac{500}{3} \\)`,
+            `\\( P(Y > 300) = \\frac{3}{10} \\)`,
+            `The median of \\( Y \\) is zero`,
+            `The quantile of order 0.6 for \\( Y \\) equals 100`,
+          ],
+        },
+        {
+          text: `Let \\( X \\) and \\( Y \\) be two independent random variables having \\( N(0, \\sigma_1^2) \\) and \\( N(0, \\sigma_2^2) \\) distributions, respectively, where \\( 0 < \\sigma_1 < \\sigma_2 \\). Then which of the following statements is/are true?`,
+          options: [
+            `\\( X+Y \\) and \\( X-Y \\) are independent`,
+            `\\( 2X+Y \\) and \\( X-Y \\) are independent if \\( 2\\sigma_1^2 = \\sigma_2^2 \\)`,
+            `\\( X+Y \\) and \\( X-Y \\) are identically distributed`,
+            `\\( X+Y \\) and \\( 2X-Y \\) are independent if \\( 2\\sigma_1^2 = \\sigma_2^2 \\)`,
+          ],
+        },
+        {
+          text: `Let \\( (X,Y) \\) be a discrete random vector. Then which of the following statements is/are true?`,
+          options: [
+            `If \\( X \\) and \\( Y \\) are independent, then \\( X^2 \\) and \\( |Y| \\) are also independent`,
+            `If the correlation coefficient between \\( X \\) and \\( Y \\) is 1, then \\( P(Y=aX+b)=1 \\) for some \\( a, b\\in\\mathbb{R} \\)`,
+            `If \\( X \\) and \\( Y \\) are independent and \\( E[(XY)^2] = 0 \\), then \\( P(X=0)=1 \\) or \\( P(Y=0)=1 \\)`,
+            `If \\( Var(X)=0 \\), then \\( X \\) and \\( Y \\) are independent`,
+          ],
+        },
+        {
+          text: `Let \\( X_1, X_2 \\) and \\( X_3 \\) be three independent and identically distributed random variables having \\( N(0,1) \\) distribution. If
+          <br><br>
+          \\( U = \\frac{2X_1^2}{(X_2+X_3)^2} \\) and \\( V = \\frac{2(X_2-X_3)^2}{2X_1^2+(X_2+X_3)^2} \\)
+          <br><br>
+          then which of the following statements is/are true?`,
+          options: [
+            `\\( U \\) has \\( F_{1,1} \\) distribution and \\( V \\) has \\( F_{1,2} \\) distribution`,
+            `\\( U \\) has \\( F_{1,1} \\) distribution and \\( V \\) has \\( F_{2,1} \\) distribution`,
+            `\\( U \\) and \\( V \\) are independent`,
+            `\\( \\frac{1}{2}V(1+U) \\) has \\( F_{2,3} \\) distribution`,
+          ],
+        },
+        {
+          text: `Let \\( X_1, X_2, X_3, X_4 \\) be a random sample from a continuous distribution with the probability density function \\( f(x) = \\frac{1}{2}e^{-|x-\\theta|}, x\\in\\mathbb{R} \\), where \\( \\theta\\in\\mathbb{R} \\) is unknown. Let the corresponding order statistics be denoted by \\( X_{(1)} < X_{(2)} < X_{(3)} < X_{(4)} \\). Then which of the following statements is/are true?`,
+          options: [
+            `\\( \\frac{1}{2}(X_{(2)}+X_{(3)}) \\) is the unique maximum likelihood estimator of \\( \\theta \\)`,
+            `\\( (X_{(1)}, X_{(2)}, X_{(3)}, X_{(4)}) \\) is a sufficient statistic for \\( \\theta \\)`,
+            `\\( \\frac{1}{4}(X_{(2)}+X_{(3)})(X_{(2)}+X_{(3)}+2) \\) is a maximum likelihood estimator of \\( \\theta(\\theta+1) \\)`,
+            `\\( (X_1 X_2 X_3, X_1 X_2 X_4) \\) is a complete statistic`,
+          ],
+        },
+        {
+          text: `Let \\( X_1, X_2, \\dots, X_n \\) \\( (n>1) \\) be a random sample from a \\( N(\\mu, 1) \\) distribution, where \\( \\mu\\in\\mathbb{R} \\) is unknown. Let \\( 0 < \\alpha < 1 \\). To test the hypothesis \\( H_0: \\mu=0 \\) against \\( H_1: \\mu = \\delta \\), where \\( \\delta > 0 \\) is a constant, let \\( \\beta \\) denote the power of the size \\( \\alpha \\) test that rejects \\( H_0 \\) if and only if \\( \\frac{1}{n}\\sum_{i=1}^n X_i > c_\\alpha \\), for some constant \\( c_\\alpha \\). Then which of the following statements is/are true?`,
+          options: [
+            `For a fixed value of \\( \\delta \\), \\( \\beta \\) increases as \\( \\alpha \\) increases`,
+            `For a fixed value of \\( \\alpha \\), \\( \\beta \\) increases as \\( \\delta \\) increases`,
+            `For a fixed value of \\( \\delta \\), \\( \\beta \\) decreases as \\( \\alpha \\) increases`,
+            `For a fixed value of \\( \\alpha \\), \\( \\beta \\) decreases as \\( \\delta \\) increases`,
+          ],
+        },
+        {
+          text: `Let \\( \\{a_n\\}_{n\\ge1} \\) be a sequence of real numbers such that \\( a_{1+5m}=2, a_{2+5m}=3, a_{3+5m}=4, a_{4+5m}=5, a_{5+5m}=6 \\), \\( m=0,1,2,\\dots \\). Then \\( \\limsup_{n\\to\\infty} a_n + \\liminf_{n\\to\\infty} a_n \\) equals`,
+          options: [`option1`, `option2`, `option3`, `option4`],
+        },
+        {
+          text: `Let \\( f:\\mathbb{R}\\to\\mathbb{R} \\) be a function such that
+          <br><br>
+          \\( 20(x-y) \\le f(x)-f(y) \\le 20(x-y) + 2(x-y)^2 \\)
+          <br><br>
+          for all \\( x,y\\in\\mathbb{R} \\) and \\( f(0)=2 \\). Then \\( f(101) \\) equals`,
+          options: [`option1`, `option2`, `option3`, `option4`],
+        },
+        {
+          text: `Let \\( A \\) be a \\( 3\\times3 \\) real matrix such that \\( \\det(A)=6 \\) and
+          <br><br>
+          <div style="text-align: center;">
+            \\( \\text{adj } A = \\begin{pmatrix} 1 & -1 & 2 \\\\ 5 & 7 & 1 \\\\ -1 & 1 & 1 \\end{pmatrix} \\)
+          </div>
+          <br>
+          where \\( \\text{adj } A \\) denotes the adjoint of \\( A \\). Then the trace of \\( A \\) equals (round off to 2 decimal places)`,
+          options: [`option1`, `option2`, `option3`, `option4`],
+        },
+        {
+          text: `Let \\( X \\) and \\( Y \\) be two independent and identically distributed random variables having \\( U(0,1) \\) distribution. Then \\( P(X^2 < Y < X) \\) equals (round off to 2 decimal places)`,
+          options: [`option1`, `option2`, `option3`, `option4`],
+        },
+        {
+          text: `Consider a sequence of independent Bernoulli trials, where \\( \\frac{3}{4} \\) is the probability of success in each trial. Let \\( X \\) be a random variable defined as follows: If the first trial is a success, then \\( X \\) counts the number of failures before the next success. If the first trial is a failure, then \\( X \\) counts the number of successes before the next failure. Then \\( 2E(X) \\) equals`,
+          options: [`option1`, `option2`, `option3`, `option4`],
+        },
+        {
+          text: `Let \\( X \\) be a random variable denoting the amount of loss in a business. The moment generating function of \\( X \\) is
+          <br><br>
+          <div style="text-align: center;">
+            \\( M(t) = \\left(\\frac{2}{2-t}\\right)^2, \\quad t < 2 \\)
+          </div>
+          <br>
+          If an insurance policy pays 60% of the loss, then the variance of the amount paid by the insurance policy equals`,
+          options: [`option1`, `option2`, `option3`, `option4`],
+        },
+        {
+          text: `Let \\( (X,Y) \\) be a random vector having the joint moment generating function
+          <br><br>
+          <div style="text-align: center;">
+            \\( M(t_1, t_2) = \\left(\\frac{1}{2}e^{-t_1} + \\frac{1}{2}e^{t_1}\\right)^2 \\left(\\frac{1}{2} + \\frac{1}{2}e^{t_2}\\right)^2, \\quad (t_1, t_2)\\in\\mathbb{R}^2 \\)
+          </div>
+          <br>
+          Then \\( P(|X+Y|=2) \\) equals (round off to 2 decimal places)`,
+          options: [`option1`, `option2`, `option3`, `option4`],
+        },
+        {
+          text: `Let \\( X_1 \\) and \\( X_2 \\) be two independent and identically distributed random variables having \\( \\chi_2^2 \\) distribution and \\( W = X_1 + X_2 \\). Then \\( P(W > E(W)) \\) equals (round off to 2 decimal places)`,
+          options: [`option1`, `option2`, `option3`, `option4`],
+        },
+        {
+          text: `Let 2.5, -1.0, 0.5, 1.5 be the observed values of a random sample of size 4 from a continuous distribution with the probability density function
+          <br><br>
+          <div style="text-align: center;">
+            \\( f(x) = \\frac{1}{8}e^{-|x-2|} + \\frac{3}{4\\sqrt{2\\pi}}e^{-\\frac{1}{2}(x-\\theta)^2}, \\quad x\\in\\mathbb{R} \\)
+          </div>
+          <br>
+          where \\( \\theta\\in\\mathbb{R} \\) is unknown. Then the method of moments estimate of \\( \\theta \\) equals (round off to 2 decimal places)`,
+          options: [`option1`, `option2`, `option3`, `option4`],
+        },
+        {
+          text: `Let \\( X_1, X_2, \\dots, X_{25} \\) be a random sample from a \\( N(\\mu, 1) \\) distribution, where \\( \\mu\\in\\mathbb{R} \\) is unknown. Consider testing of the hypothesis \\( H_0: \\mu = 5.2 \\) against \\( H_1: \\mu = 5.6 \\). The null hypothesis is rejected if and only if \\( \\frac{1}{25}\\sum_{i=1}^{25} X_i > k \\), for some constant \\( k \\). If the size of the test is 0.05, then the probability of type-II error equals (round off to 2 decimal places)`,
+          options: [`option1`, `option2`, `option3`, `option4`],
+        },
+        {
+          text: `Let \\( f:\\mathbb{R}^2\\to\\mathbb{R} \\) be the function defined by \\( f(x,y) = x^2 - 12y \\). If \\( M \\) and \\( m \\) be the maximum value and the minimum value, respectively, of the function \\( f \\) on the circle \\( x^2+y^2=49 \\), then \\( |M|+|m| \\) equals`,
+          options: [`option1`, `option2`, `option3`, `option4`],
+        },
+        {
+          text: `The value of \\( \\int_{0}^{1} \\int_{0}^{1} (x+y)^2 e^{x+y} \\, dy \\, dx \\) equals (round off to 2 decimal places)`,
+          options: [`option1`, `option2`, `option3`, `option4`],
+        },
+        {
+          text: `Let
+          <br><br>
+          <div style="text-align: center;">
+            \\( A = \\begin{pmatrix} 1 & -1 & 2 \\\\ -1 & 0 & 1 \\\\ 2 & 1 & 1 \\end{pmatrix} \\)
+          </div>
+          <br>
+          and let \\( \\begin{pmatrix} x_1 \\\\ x_2 \\\\ x_3 \\end{pmatrix} \\) be an eigenvector corresponding to the smallest eigenvalue of \\( A \\), satisfying \\( x_1^2 + x_2^2 + x_3^2 = 1 \\). Then the value of \\( |x_1| + |x_2| + |x_3| \\) equals (round off to 2 decimal places)`,
+          options: [`option1`, `option2`, `option3`, `option4`],
+        },
+        {
+          text: `Five men go to a restaurant together and each of them orders a dish that is different from the dishes ordered by the other members of the group. However, the waiter serves the dishes randomly. Then the probability that exactly one of them gets the dish he ordered equals (round off to 2 decimal places)`,
+          options: [`option1`, `option2`, `option3`, `option4`],
+        },
+        {
+          text: `Let \\( X \\) be a random variable having the probability density function
+          <br><br>
+          <div style="text-align: center;">
+            \\( f(x) = \\begin{cases} ax^2 + b, & 0 \\le x \\le 3 \\\\ 0, & \\text{otherwise,} \\end{cases} \\)
+          </div>
+          <br>
+          If \\( P(X \\ge 2) = \\frac{2}{3} \\), then \\( E(X) \\) equals (round off to 2 decimal places)`,
+          options: [`option1`, `option2`, `option3`, `option4`],
+        },
+        {
+          text: `A vaccine, when it is administered to an individual, produces no side effects with probability \\( \\frac{4}{5} \\), mild side effects with probability \\( \\frac{2}{15} \\) and severe side effects with probability \\( \\frac{1}{15} \\). Assume that the development of side effects is independent across individuals. The vaccine was administered to 1000 randomly selected individuals. If \\( X_1 \\) denotes the number of individuals who developed mild side effects and \\( X_2 \\) denotes the number of individuals who developed severe side effects, then the coefficient of variation of \\( X_1 + X_2 \\) equals (round off to 2 decimal places)`,
+          options: [`option1`, `option2`, `option3`, `option4`],
+        },
+        {
+          text: `Let \\( \\{X_n\\}_{n\\ge1} \\) be a sequence of independent and identically distributed random variables having \\( U(0,1) \\) distribution. Let \\( Y_n = n \\min\\{X_1, X_2, \\dots, X_n\\}, n\\ge1 \\). If \\( Y_n \\) converges to \\( Y \\) in distribution, then the median of \\( Y \\) equals (round off to 2 decimal places)`,
+          options: [`option1`, `option2`, `option3`, `option4`],
+        },
+        {
+          text: `Let \\( X_{(1)} < X_{(2)} < X_{(3)} < X_{(4)} < X_{(5)} \\) be the order statistics based on a random sample of size 5 from a continuous distribution with the probability density function
+          <br><br>
+          <div style="text-align: center;">
+            \\( f(x) = \\begin{cases} \\frac{1}{x^2}, & 1 < x < \\infty \\\\ 0, & \\text{otherwise.} \\end{cases} \\)
+          </div>
+          <br>
+          Then the sum of all possible values of \\( r\\in\\{1,2,3,4,5\\} \\) for which \\( E(X_{(r)}) \\) is finite equals`,
+          options: [`option1`, `option2`, `option3`, `option4`],
+        },
+        {
+          text: `Consider the linear regression model \\( y_i = \\beta_0 + \\beta_1 x_i + \\epsilon_i, i=1, 2, \\dots, 6 \\), where \\( \\beta_0 \\) and \\( \\beta_1 \\) are unknown parameters and \\( \\epsilon_i \\) are independent and identically distributed random variables having \\( N(0,1) \\) distribution. The data on \\( (x_i, y_i) \\) are given in the following table.
+          <br><br>
+          <table border="1" style="margin: 0 auto; text-align: center; border-collapse: collapse;">
+            <tr> <th>\\( x_i \\)</th> <td>1.0</td> <td>2.0</td> <td>2.5</td> <td>3.0</td> <td>3.5</td> <td>4.5</td> </tr>
+            <tr> <th>\\( y_i \\)</th> <td>2.0</td> <td>3.0</td> <td>3.5</td> <td>4.2</td> <td>5.0</td> <td>5.4</td> </tr>
+          </table>
+          <br>
+          If \\( \\hat{\\beta_0} \\) and \\( \\hat{\\beta_1} \\) are the least squares estimates of \\( \\beta_0 \\) and \\( \\beta_1 \\), respectively, based on the above data, then \\( \\hat{\\beta_0} + \\hat{\\beta_1} \\) equals (round off to 2 decimal places)`,
+          options: [`option1`, `option2`, `option3`, `option4`],
+        },
+        {
+          text: `Let \\( X_1, X_2, \\dots, X_9 \\) be a random sample from a \\( N(\\mu, \\sigma^2) \\) distribution, where \\( \\mu\\in\\mathbb{R} \\) and \\( \\sigma > 0 \\) are unknown. Let the observed values of \\( \\overline{X} = \\frac{1}{9}\\sum_{i=1}^{9} X_i \\) and \\( S^2 = \\frac{1}{8}\\sum_{i=1}^{9} (X_i - \\overline{X})^2 \\) be 9.8 and 1.44, respectively. If the likelihood ratio test is used to test the hypothesis \\( H_0: \\mu = 8.8 \\) against \\( H_1: \\mu > 8.8 \\), then the p-value of the test equals (round off to 3 decimal places)`,
+          options: [`option1`, `option2`, `option3`, `option4`],
+        },
+      ];
+
+      // Correct answers array
+      const correct_ans = [
+        "C", "B", "D", "D", "A", "A", "A", "A", "B", "C",
+        "A", "D", "A", "Marks to All", "B", "B", "A", "A", "A", "A",
+        "A", "A", "D", "B", "C", "D", "A", "B", "B", "C",
+        "A,B,D", "A,B,C,D", "A,C,D", "A,C,D", "A,B,C", "B,C,D", "A,B,C,D", "A,C", "B,C", "A,B",
+        [8, 8], [2022, 2022], [3.45, 3.55], [0.15, 0.18], [2, 2], [0.17, 0.19], [0.23, 0.27], [0.39, 0.43], [0.48, 0.52], [0.34, 0.38],
+        [169, 169], [12.70, 12.90], [1.70, 1.76], [0.35, 0.40], [2.10, 2.25], [0.05, 0.07], [0.67, 0.71], [10, 10], [2.00, 2.10], [0.017, 0.021]
+      ];
+
+      for (let i = 1; i <= 60; i++) {
+        let q = { id: i, status: "not-visited", answer: null };
+        if (i <= 30) {
+          q.section = "A";
+          q.type = "MCQ";
+        } else if (i <= 40) {
+          q.section = "B";
+          q.type = "MSQ";
+        } else {
+          q.section = "C";
+          q.type = "NAT";
+        }
+        q.content = questions[i - 1];
+        q.correctAnswer = correct_ans[i - 1];
+        questionDB.push(q);
+      }
+
+      /* --- 2. STATE --- */
+      let currentSection = "A";
+      let currentQIndex = 1;
+
+      /* --- 3. CORE FUNCTIONS --- */
+
+      function loadQuestion(id) {
+        currentQIndex = id;
+        const q = questionDB[id - 1];
+
+        // Update marks display based on question index
+        document.querySelector(".marks-pos").innerText = rightMarks[id];
+        document.getElementById("neg-marks").innerText = wrongMarks[id];
+
+        // Switch tab logic
+        if (q.section !== currentSection) {
+          switchSection(q.section, false);
+        }
+
+        // Update status 'not-visited' -> 'not-answered' upon viewing
+        if (q.status === "not-visited") {
+          q.status = "not-answered";
+        }
+
+        renderQuestionContent(q);
+        renderPalette();
+        updateLegends(); // Updates tooltips and sidebar
+      }
+
+      function switchSection(sec, autoLoadFirst = true) {
+        currentSection = sec;
+
+        // UI Update
+        document
+          .querySelectorAll(".tab")
+          .forEach((t) => t.classList.remove("active"));
+        document.getElementById("tab-" + sec).classList.add("active");
+
+        document.getElementById("section-title").innerText = "Section " + sec;
+        document.getElementById("q-type-label").innerText =
+          sectionConfig[sec].type;
+
+        if (autoLoadFirst) {
+          loadQuestion(sectionConfig[sec].start);
+        } else {
+          renderPalette();
+        }
+      }
+
+      function renderQuestionContent(q) {
+        const container = document.getElementById("q-content");
+        let html = `<div class="q-no">Question No. ${q.id}</div>`;
+        html += `<div style="margin-bottom:20px;">${q.content.text}</div>`;
+
+        if (q.type === "MCQ") {
+          q.content.options.forEach((opt, idx) => {
+            const letter = String.fromCharCode(65 + idx);
+            const checked = q.answer === letter ? "checked" : "";
+            html += `
+                    <div class="option-row" onclick="setAnswer(${q.id}, ${idx}, 'MCQ')">
+                        <input type="radio" name="opt" ${checked}>
+                        <label>${opt}</label>
+                    </div>`;
+          });
+        } else if (q.type === "MSQ") {
+          q.content.options.forEach((opt, idx) => {
+            const letter = String.fromCharCode(65 + idx);
+            const isChecked = q.answer && q.answer.includes(letter) ? "checked" : "";
+            html += `
+                    <div class="option-row" onclick="setAnswer(${q.id}, ${idx}, 'MSQ')">
+                        <input type="checkbox" name="opt" ${isChecked}>
+                        <label>${opt}</label>
+                    </div>`;
+          });
+        } else if (q.type === "NAT") {
+          const val = q.answer || "";
+          html += `
+                <div class="nat-wrapper">
+                    <input type="text" class="nat-input" id="nat-display" value="${val}" oninput="questionDB[currentQIndex - 1].answer = this.value">
+
+                    <div class="keypad">
+                        <div class="key action" style="grid-column: span 3;" onclick="natKey('BS')">Backspace</div>
+
+                        <div class="key" onclick="natKey('7')">7</div>
+                        <div class="key" onclick="natKey('8')">8</div>
+                        <div class="key" onclick="natKey('9')">9</div>
+
+                        <div class="key" onclick="natKey('4')">4</div>
+                        <div class="key" onclick="natKey('5')">5</div>
+                        <div class="key" onclick="natKey('6')">6</div>
+
+                        <div class="key" onclick="natKey('1')">1</div>
+                        <div class="key" onclick="natKey('2')">2</div>
+                        <div class="key" onclick="natKey('3')">3</div>
+
+                        <div class="key" onclick="natKey('0')">0</div>
+                        <div class="key" onclick="natKey('.')">.</div>
+                        <div class="key" onclick="natKey('-')">-</div>
+
+                        <div style="grid-column: span 3; display: flex; justify-content: center; gap: 10px;">
+                            <div class="key action" style="width: 32%;" onclick="natKey('LEFT')">&larr;</div>
+                            <div class="key action" style="width: 32%;" onclick="natKey('RIGHT')">&rarr;</div>
+                        </div>
+
+                        <div class="key action" style="grid-column: span 3;" onclick="natKey('CLR')">Clear All</div>
+                    </div>
+                </div>`;
+        }
+
+        container.innerHTML = html;
+        MathJax.typesetPromise([container]).then(() => {});
+      }
+
+      function renderPalette() {
+        const grid = document.getElementById("palette-grid");
+        grid.innerHTML = "";
+
+        const start = sectionConfig[currentSection].start;
+        const end = sectionConfig[currentSection].end;
+
+        for (let i = start; i <= end; i++) {
+          const q = questionDB[i - 1];
+          const btn = document.createElement("div");
+          btn.className = "q-btn " + q.status;
+          if (i === currentQIndex) btn.classList.add("current");
+
+          btn.innerText = i;
+          btn.onclick = () => loadQuestion(i);
+          grid.appendChild(btn);
+        }
+      }
+
+      /* --- 4. LOGIC --- */
+
+      function setAnswer(qId, val, type) {
+        const q = questionDB[qId - 1];
+        if (type === "MCQ") {
+          q.answer = String.fromCharCode(65 + val); // Convert 0->A, 1->B, 2->C, 3->D
+          loadQuestion(qId);
+        } else if (type === "MSQ") {
+          if (!q.answer) q.answer = [];
+          const letter = String.fromCharCode(65 + val);
+          const idx = q.answer.indexOf(letter);
+          if (idx > -1) q.answer.splice(idx, 1);
+          else q.answer.push(letter);
+          q.answer.sort(); // Keep in alphabetical order
+          loadQuestion(qId);
+        }
+      }
+
+      function natKey(k) {
+        const el = document.getElementById("nat-display");
+        const q = questionDB[currentQIndex - 1];
+
+        // Focus input to ensure we capture/restore cursor correctly
+        el.focus();
+
+        let start = el.selectionStart;
+        let end = el.selectionEnd;
+        let val = el.value;
+
+        if (k === "CLR") {
+          val = "";
+          start = end = 0;
+        } else if (k === "BS") {
+          if (start === end) {
+            // No selection: delete character before cursor
+            if (start > 0) {
+              val = val.slice(0, start - 1) + val.slice(end);
+              start--;
+            }
+          } else {
+            // Selection exists: delete selected text
+            val = val.slice(0, start) + val.slice(end);
+          }
+          end = start;
+        } else if (k === "LEFT") {
+          if (start > 0) start--;
+          end = start;
+        } else if (k === "RIGHT") {
+          if (start < val.length) start++;
+          end = start;
+        } else if (k === "ENT") {
+          /* UI feedback only */
+        } else {
+          // Insert character at cursor position (replaces selection if any)
+          val = val.slice(0, start) + k + val.slice(end);
+          start++;
+          end = start;
+        }
+
+        // Update value and restore cursor position
+        el.value = val;
+        q.answer = val;
+        el.setSelectionRange(start, end);
+      }
+
+      function handleAction(type) {
+        const q = questionDB[currentQIndex - 1];
+        let hasAns = false;
+
+        if (q.type === "MSQ") {
+          hasAns = q.answer && q.answer.length > 0;
+        } else {
+          hasAns = q.answer !== null && q.answer !== "";
+        }
+
+        if (type === "save") {
+          if (hasAns) q.status = "answered";
+          else q.status = "not-answered";
+          moveToNext();
+        } else if (type === "review") {
+          if (hasAns) q.status = "marked-ans";
+          else q.status = "marked";
+          moveToNext();
+        } else if (type === "clear") {
+          q.answer = null;
+          q.status = "not-answered";
+          if (q.type === "NAT")
+            document.getElementById("nat-display").value = "";
+          else loadQuestion(currentQIndex);
+        }
+      }
+
+      function moveToNext() {
+        if (currentQIndex < 60) {
+          loadQuestion(currentQIndex + 1);
+        } else {
+          renderPalette();
+          updateLegends();
+        }
+      }
+
+      /* --- 5. TOOLTIPS & LEGENDS --- */
+      function updateLegends() {
+        ["A", "B", "C"].forEach((sec) => {
+          const s = sectionConfig[sec].start;
+          const e = sectionConfig[sec].end;
+          const stats = { ans: 0, not: 0, vis: 0, mark: 0, markans: 0 };
+
+          for (let i = s - 1; i < e; i++) {
+            const st = questionDB[i].status;
+            if (st === "answered") stats.ans++;
+            else if (st === "not-answered") stats.not++;
+            else if (st === "not-visited") stats.vis++;
+            else if (st === "marked") stats.mark++;
+            else if (st === "marked-ans") stats.markans++;
+          }
+
+          // Populate Tooltip HTML
+          const ttHTML = `
+                    <div class="tt-row"><div class="tt-shape lg-green">${stats.ans}</div> Answered</div>
+                    <div class="tt-row"><div class="tt-shape lg-red">${stats.not}</div> Not Answered</div>
+                    <div class="tt-row"><div class="tt-shape lg-grey">${stats.vis}</div> Not Visited</div>
+                    <div class="tt-row"><div class="tt-shape lg-purple">${stats.mark}</div> Marked for Review</div>
+                    <div class="tt-row"><div class="tt-shape lg-purple-tick">${stats.markans}</div> Ans & Marked for Review</div>
+                `;
+          document.getElementById("tooltip-" + sec).innerHTML = ttHTML;
+
+          // Update Side Legend if current section
+          if (sec === currentSection) {
+            document.getElementById("leg-ans").innerText = stats.ans;
+            document.getElementById("leg-not").innerText = stats.not;
+            document.getElementById("leg-vis").innerText = stats.vis;
+            document.getElementById("leg-mark").innerText = stats.mark;
+            document.getElementById("leg-markans").innerText = stats.markans;
+          }
+        });
+      }
+
+      // --- 6. UTILS ---
+      let time = 180 * 60;
+      setInterval(() => {
+        const m = Math.floor(time / 60);
+        const s = time % 60;
+        document.getElementById("timer").innerText = `${m}:${
+          s < 10 ? "0" + s : s
+        }`;
+        if (time > 0) time--;
+      }, 1000);
+
+      function populateFullPaperView() {
+          const container = document.getElementById("full-paper-view");
+          container.innerHTML = "";
+
+          let html = `
+            <div>
+          `;
+
+          // Helper to determine Question Type based on sectionConfig
+          const getQuestionType = (qNum) => {
+              for (const section in sectionConfig) {
+                  if (qNum >= sectionConfig[section].start && qNum <= sectionConfig[section].end) {
+                      return sectionConfig[section].type;
+                  }
+              }
+              return "Unknown";
+          };
+
+          // Add questions list
+          questions.forEach((q, index) => {
+            const qNum = index + 1;
+            const qType = getQuestionType(qNum);
+            const rightMark = rightMarks[qNum];
+            const wrongMark = wrongMarks[qNum];
+
+            html += `
+              <div class="question-container">
+                <div class="q-header">Q. ${qNum})</div>
+                <div class="q-content">${q.text}</div>
+                <div class="q-meta">
+                  Question Type: <strong>${qType}</strong> ; Marks for correct answer : <span style="color: #009900; font-weight: bold;">${rightMark}</span>; Negative marks: <span style="color: #cc0000; font-weight: bold;">${wrongMark}</span>
+                </div>
+              </div>
+            `;
+          });
+
+          html += `
+            </div>
+          `;
+
+          container.innerHTML = html;
+          if (window.MathJax) {
+              MathJax.typesetPromise([container]).then(() => {});
+          }
+      }
+
+
+      function submitExam() {
+        // Create results modal
+        const modal = document.createElement('div');
+        modal.style.cssText = `
+          position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+          background: rgba(0,0,0,0.8); z-index: 1000; display: flex;
+          align-items: center; justify-content: center;
+        `;
+
+        let totalScore = 0;
+        let attempted = 0;
+        let correct = 0;
+
+        let tableHTML = `
+          <div style="background: white; padding: 20px; border-radius: 10px; max-width: 90%; max-height: 90%; overflow-y: auto;">
+            <h2 style="text-align: center; margin-bottom: 20px;">Exam Results</h2>
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+              <thead>
+                <tr style="background: #f8f9fa;">
+                  <th style="border: 1px solid #ddd; padding: 8px;">Question</th>
+                  <th style="border: 1px solid #ddd; padding: 8px;">Your Answer</th>
+                  <th style="border: 1px solid #ddd; padding: 8px;">Correct Answer</th>
+                  <th style="border: 1px solid #ddd; padding: 8px;">Score</th>
+                </tr>
+              </thead>
+              <tbody>
+        `;
+
+        questionDB.forEach((q, index) => {
+          const qNum = index + 1;
+          let yourAnswer = q.answer || "Not Attempted";
+
+          // Format MSQ answers as comma-separated
+          if (q.type === "MSQ" && Array.isArray(yourAnswer)) {
+            yourAnswer = yourAnswer.join(',');
+          }
+
+          const correctAnswer = Array.isArray(q.correctAnswer) ?
+            q.correctAnswer.join(" to ") : q.correctAnswer;
+          let score = 0;
+
+          if (q.answer !== null && q.answer !== "" && (!Array.isArray(q.answer) || q.answer.length > 0)) {
+            attempted++;
+
+            // Check if answer is correct
+            let isCorrect = false;
+            if (q.type === "NAT") {
+              // For NAT, check if answer is within range
+              if (Array.isArray(q.correctAnswer)) {
+                const numAnswer = parseFloat(q.answer);
+                isCorrect = numAnswer >= q.correctAnswer[0] && numAnswer <= q.correctAnswer[1];
+              }
+            } else if (q.type === "MSQ") {
+              // For MSQ, compare sorted arrays
+              const yourAnsSorted = Array.isArray(q.answer) ? q.answer.sort().join(',') : q.answer;
+              const correctAnsSorted = q.correctAnswer.split(',').map(s => s.trim()).sort().join(',');
+              isCorrect = yourAnsSorted === correctAnsSorted;
+            } else {
+              // For MCQ
+              isCorrect = q.answer === q.correctAnswer;
+            }
+
+            if (isCorrect) {
+              score = rightMarks[qNum];
+              correct++;
+            } else {
+              score = wrongMarks[qNum] === "0" ? 0 : -eval(wrongMarks[qNum]).toFixed(2);
+            }
+          }
+
+          totalScore += score;
+
+          tableHTML += `
+            <tr>
+              <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${qNum}</td>
+              <td style="border: 1px solid #ddd; padding: 8px;">${yourAnswer}</td>
+              <td style="border: 1px solid #ddd; padding: 8px;">${correctAnswer}</td>
+              <td style="border: 1px solid #ddd; padding: 8px; text-align: center; color: ${score > 0 ? 'green' : score < 0 ? 'red' : 'black'};">${score}</td>
+            </tr>
+          `;
+        });
+
+        tableHTML += `
+              </tbody>
+            </table>
+            <div style="text-align: center; font-size: 18px; font-weight: bold; margin-bottom: 10px;">
+              Total Score: ${totalScore.toFixed(2)}
+            </div>
+            <div style="text-align: center; font-size: 16px;">
+              Accuracy: ${attempted > 0 ? Math.round((correct / attempted) * 100) : 0}% (${correct}/${attempted} attempted questions correct)
+            </div>
+            <div style="text-align: center; margin-top: 20px;">
+              <button onclick="this.parentElement.parentElement.parentElement.remove()" style="padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">Close</button>
+            </div>
+          </div>
+        `;
+
+        modal.innerHTML = tableHTML;
+        document.body.appendChild(modal);
+      }
+
+      function openModal(id) {
+        if (id === "qp") {
+          populateFullPaperView();
+        }
+        document.getElementById("modal-" + id).style.display = "flex";
+      }
+      function closeModal(id) {
+        document.getElementById("modal-" + id).style.display = "none";
+      }
+
+      const calc = document.querySelector("#loadCalc");
+      calc.style.right = "10px";
+      calc.style.top = "40px";
+      calc.style.display = "none";
+
+      let from_x, from_y, init_x, init_y;
+      let dragging;
+      calc.onmousedown = (ev) => {
+        from_x = parseInt(
+          window.getComputedStyle(calc).getPropertyValue("left")
+        );
+        from_y = parseInt(calc.style.top);
+        init_x = ev.clientX;
+        init_y = ev.clientY;
+        dragging = true;
+      };
+      document.onmouseup = () => {
+        dragging = false;
+      };
+      document.onmousemove = (ev) => {
+        if (dragging) {
+          calc.style.left = from_x + ev.clientX - init_x + "px";
+          calc.style.top = from_y + ev.clientY - init_y + "px";
+        }
+      };
+
+      function loadCalculator() {
+        if (calc.style.display == "none") {
+          calc.style.display = "";
+        } else {
+          calc.style.display = "none";
+        }
+      }
+
+      document.querySelector("#closeButton1").onclick = () => {
+        calc.style.display = "none";
+      };
+
+      // Init
+      window.onload = () => {
+        loadQuestion(1);
+      };
+    </script>
+
+    <script src="https://www.digialm.com//OnlineAssessment/js/jquery-3.6.0.min.js?v=17.05.02.162418"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/jquery.cookie.js?v=17.05.02.162418"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/bean.js?v=17.05.02.162418"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/forge.min.js?v=17.05.02.162418"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/ckeditor.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/loader.js?undefined"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/event.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/editor_basic.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/env.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/ckeditor_basic.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/log.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/dom.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/tools.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/dtd.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/dom/event.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/dom/domobject.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/dom/node.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/dom/window.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/dom/document.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/dom/nodelist.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/dom/element.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/dom/documentfragment.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/dom/walker.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/dom/range.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/dom/iterator.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/command.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/ckeditor_base.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/config.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/filter.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/focusmanager.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/keystrokehandler.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/lang.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/scriptloader.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/resourcemanager.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/plugins.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/ui.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/editor.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/htmlparser.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/htmlparser/basicwriter.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/htmlparser/node.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/htmlparser/comment.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/htmlparser/text.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/htmlparser/cdata.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/htmlparser/fragment.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/htmlparser/filter.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/htmldataprocessor.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/htmlparser/element.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/template.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/ckeditor.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/creators/inline.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/creators/themedui.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/editable.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/selection.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/style.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/dom/comment.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/dom/elementpath.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/dom/text.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/dom/rangelist.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/skin.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/_bootstrap.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/loader.js?undefined"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/event.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/editor_basic.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/env.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/ckeditor_basic.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/log.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/dom.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/tools.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/dtd.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/dom/event.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/dom/domobject.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/dom/node.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/dom/window.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/dom/document.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/dom/nodelist.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/dom/element.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/dom/documentfragment.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/dom/walker.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/dom/range.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/dom/iterator.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/command.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/ckeditor_base.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/config.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/filter.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/focusmanager.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/keystrokehandler.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/lang.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/scriptloader.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/resourcemanager.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/plugins.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/ui.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/editor.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/htmlparser.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/htmlparser/basicwriter.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/htmlparser/node.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/htmlparser/comment.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/htmlparser/text.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/htmlparser/cdata.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/htmlparser/fragment.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/htmlparser/filter.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/htmldataprocessor.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/htmlparser/element.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/template.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/ckeditor.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/creators/inline.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/creators/themedui.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/editable.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/selection.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/style.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/dom/comment.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/dom/elementpath.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/dom/text.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/dom/rangelist.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/skin.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/CKMathEditor/core/_bootstrap.js"></script>
+    <script src="https://www.digialm.com//OnlineAssessment/js/oscZenoedited.js"></script>
+  </body>
+</html>
