@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Assessment Examination Center</title>
+    <title>JAM Mock Test</title>
     <script src="https://raunak1089.github.io/all_scripts/fontawesome.js"></script>
     <script
       id="MathJax-script"
@@ -384,7 +384,7 @@
       /* Common base */
       .lg-base {
         width: 22px;
-        height: 22px;
+        height: 20px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -396,11 +396,13 @@
       /* Specific Styles */
       .lg-green {
         background: #5cb85c;
-        border-radius: 12px 12px 0 0;
+        border-radius: 7px 7px 0 0;
+        corner-shape: bevel;
       } /* Round Top */
       .lg-red {
         background: #d9534f;
-        border-radius: 0 0 12px 12px;
+        border-radius: 0 0 7px 7px;
+        corner-shape: bevel;
       } /* Round Bottom */
       .lg-grey {
         background: #f0f0f0;
@@ -461,7 +463,7 @@
 
       /* Grid Buttons behave like the legends */
       .q-btn {
-        height: 2.7em;
+        height: 2.5em;
         width: 2.7em;
         border: 1px solid #ccc;
         background: #fff;
@@ -478,17 +480,19 @@
       .q-btn.not-answered {
         background-color: #d9534f;
         color: white;
-        border-radius: 0 0 20px 20px;
+        border-radius: 0 0 15px 15px;
+        corner-shape: bevel;
       }
       .q-btn.answered {
         background-color: #5cb85c;
         color: white;
-        border-radius: 20px 20px 0 0;
+        border-radius: 15px 15px 0 0;
+        corner-shape: bevel;
       }
       .q-btn.not-visited {
         background-color: #f0f0f0;
         color: black;
-        border-radius: 0;
+        border-radius: 5px;
       }
       .q-btn.marked {
         background-color: #7b1fa2;
@@ -519,8 +523,7 @@
         opacity: 0.8;
       }
       .q-btn.current {
-        border: 2px solid #000;
-        box-shadow: 0 0 3px #000;
+        border: 1px solid #000;
         z-index: 10;
       }
 
